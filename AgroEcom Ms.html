@@ -1,0 +1,3147 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AgroEcom Ghana · Cocoa Management System</title>
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <!-- Tailwind CSS (preflight disabled to avoid conflicts with Bootstrap) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { preflight: false };
+    </script>
+    <!-- Lucide Icons (optional, kept for compatibility) -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-body); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: var(--ecom-primary); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--ecom-dark); }
+
+        :root {
+            --bg-body: #f4f7fa;
+            --bg-card: #ffffff;
+            --bg-card-header: #ffffff;
+            --bg-dashboard-stat: #ffffff;
+            --bg-table-header: #f8fafc;
+            --bg-input: #ffffff;
+            --bg-search: #ffffff;
+            --text-primary: #1e2a3a;
+            --text-secondary: #6c7a8a;
+            --text-muted: #6c7a8a;
+            --border-color: #eaeef2;
+            --shadow-color: rgba(0, 0, 0, 0.05);
+            --shadow-hover: rgba(0, 0, 0, 0.08);
+            --bg-login-card: #ffffff;
+            --bg-modal: #ffffff;
+            --btn-close-filter: 0;
+            --ecom-primary: #2E7D32;
+            --ecom-secondary: #8BC34A;
+            --ecom-accent: #558B2F;
+            --ecom-dark: #1B5E20;
+            --ecom-gold: #F9A825;
+            --loan-color: #E65100;
+        }
+        [data-bs-theme="dark"] {
+            --bg-body: #0d1b2a;
+            --bg-card: #1b2d3f;
+            --bg-card-header: #1e3347;
+            --bg-dashboard-stat: #1b2d3f;
+            --bg-table-header: #1e3347;
+            --bg-input: #0d1b2a;
+            --bg-search: #0d1b2a;
+            --text-primary: #f0f0f0;
+            --text-secondary: #a0b8cc;
+            --text-muted: #5a7a92;
+            --border-color: #2a4055;
+            --shadow-color: rgba(0, 0, 0, 0.4);
+            --shadow-hover: rgba(0, 0, 0, 0.5);
+            --bg-login-card: #1b2d3f;
+            --bg-modal: #1b2d3f;
+            --btn-close-filter: 1;
+            --ecom-primary: #4CAF50;
+            --ecom-secondary: #8BC34A;
+            --ecom-accent: #558B2F;
+            --ecom-dark: #2E7D32;
+            --ecom-gold: #F9A825;
+            --loan-color: #FF8A65;
+        }
+        body {
+            background: var(--bg-body);
+            padding-bottom: 70px;
+            color: var(--text-primary);
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+        .card {
+            background: var(--bg-card);
+            border-radius: 1rem;
+            box-shadow: 0 8px 20px var(--shadow-color);
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .card:hover { transform: translateY(-2px); box-shadow: 0 12px 30px var(--shadow-hover); }
+        .card-header {
+            background: var(--bg-card-header);
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        .dashboard-stat {
+            background: var(--bg-dashboard-stat);
+            border-radius: 1rem;
+            padding: 1.2rem;
+            text-align: center;
+            border: 1px solid var(--border-color);
+            transition: transform 0.3s ease;
+            cursor: default;
+        }
+        .dashboard-stat:hover { transform: translateY(-4px) scale(1.02); }
+        .dashboard-stat h4 { font-size: 1.8rem; font-weight: 700; color: var(--text-primary); }
+        .dashboard-stat span { color: var(--text-secondary); font-size: 0.9rem; }
+        .dashboard-stat .stat-icon { font-size: 1.8rem; display: block; margin-bottom: 0.3rem; }
+        .btn-primary { background: var(--ecom-primary); border-color: var(--ecom-primary); color: white; transition: all 0.3s ease; }
+        .btn-primary:hover { background: var(--ecom-dark); border-color: var(--ecom-dark); transform: translateY(-2px); box-shadow: 0 4px 20px rgba(46, 125, 50, 0.4); color: white; }
+        .btn-success { background: var(--ecom-primary); border-color: var(--ecom-primary); color: white; }
+        .btn-success:hover { background: var(--ecom-dark); border-color: var(--ecom-dark); transform: translateY(-2px); color: white; }
+        .btn-danger { background: #ce1126; border-color: #ce1126; color: white; }
+        .btn-danger:hover { background: #e8142d; border-color: #e8142d; transform: translateY(-2px); color: white; }
+        .btn-warning { background: var(--ecom-gold); border-color: var(--ecom-gold); color: #1e2a3a; }
+        .btn-warning:hover { background: #f9c33a; border-color: #f9c33a; transform: translateY(-2px); color: #1e2a3a; }
+        .btn-info { background: #17a2b8; border-color: #17a2b8; color: white; }
+        .btn-info:hover { background: #138496; border-color: #138496; transform: translateY(-2px); color: white; }
+        .btn-outline-secondary { color: var(--text-secondary); border-color: var(--border-color); }
+        .btn-outline-secondary:hover { background: var(--border-color); color: var(--text-primary); }
+        .btn-loan { background: var(--loan-color); border-color: var(--loan-color); color: white; }
+        .btn-loan:hover { background: #BF360C; border-color: #BF360C; transform: translateY(-2px); color: white; }
+
+        .nav-tabs .nav-link { color: var(--text-secondary); transition: all 0.3s ease; }
+        .nav-tabs .nav-link:hover { color: var(--text-primary); transform: translateY(-2px); }
+        .nav-tabs .nav-link.active {
+            border-bottom: 3px solid var(--ecom-primary);
+            color: var(--ecom-primary);
+            font-weight: 600;
+            background: transparent;
+        }
+
+        /* Farmer Modal Tabs (nav-pills) */
+        #farmerModal .nav-pills .nav-link {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            margin-right: 0.25rem;
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+        }
+        #farmerModal .nav-pills .nav-link.active {
+            background: var(--ecom-primary);
+            color: white;
+            border-color: var(--ecom-primary);
+        }
+        #farmerModal .nav-pills .nav-link:hover {
+            background: var(--bg-table-header);
+        }
+        #farmerModal .invalid-feedback {
+            display: none;
+            font-size: 0.8rem;
+            color: #dc3545;
+        }
+        #farmerModal .was-validated .form-control:invalid,
+        #farmerModal .form-control.is-invalid {
+            border-color: #dc3545;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right calc(0.375em + 0.1875rem) center;
+            background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+        }
+        #farmerModal .was-validated .form-control:invalid ~ .invalid-feedback,
+        #farmerModal .form-control.is-invalid ~ .invalid-feedback {
+            display: block;
+        }
+
+        .login-container { max-width: 420px; margin: 80px auto; }
+        .login-card { padding: 2.5rem; border-radius: 1.5rem; background: var(--bg-login-card); border: 1px solid var(--border-color); transition: transform 0.3s ease; }
+        .login-card:hover { transform: translateY(-5px); }
+        .login-card h3 { color: var(--text-primary); font-weight: 700; }
+        .login-card .cocoa-leaf { font-size: 4.5rem; display: inline-block; animation: float 3s ease-in-out infinite; }
+        .login-card .form-control { background: var(--bg-input); border-color: var(--border-color); color: var(--text-primary); }
+        .login-card .form-control:focus { border-color: var(--ecom-primary); box-shadow: 0 0 0 0.2rem rgba(46, 125, 50, 0.2); }
+        .bg-ecom { background: linear-gradient(135deg, var(--ecom-primary) 0%, var(--ecom-secondary) 50%, var(--ecom-accent) 100%); height: 6px; width: 100%; }
+        .toast-container { z-index: 9999; }
+        .toast { background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 12px; }
+        .toast .btn-close { filter: invert(var(--btn-close-filter, 0)); }
+        .table { color: var(--text-primary); }
+        .table th { background: var(--bg-table-header); color: var(--text-secondary); border-color: var(--border-color); }
+        .table td { border-color: var(--border-color); }
+        .table tbody tr:hover { background: var(--bg-table-header); }
+        .station-tag { background: var(--bg-table-header); padding: 2px 10px; border-radius: 20px; font-size: 0.8rem; color: var(--text-secondary); }
+        .farmer-id-badge { background: var(--ecom-primary); color: white; padding: 2px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+        .bag-badge { background: var(--ecom-dark); color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 600; }
+        .ghana-card-badge { background: var(--ecom-gold); color: #1e2a3a; padding: 2px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 600; }
+        .pc-badge { background: #17a2b8; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 600; }
+        .bonus-badge { background: var(--ecom-gold); color: #1e2a3a; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 600; }
+        .do-badge { background: var(--ecom-dark); color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 600; }
+        .loan-badge { background: var(--loan-color); color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 600; }
+        .loan-paid-badge { background: #2E7D32; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 600; }
+        .search-box { max-width: 400px; position: relative; }
+        .search-box .form-control { background: var(--bg-search); border-color: var(--border-color); color: var(--text-primary); padding-right: 80px; border-radius: 20px; }
+        .search-box .form-control:focus { border-color: var(--ecom-primary); box-shadow: 0 0 0 0.2rem rgba(46, 125, 50, 0.15); }
+        .search-box .search-actions { position: absolute; right: 5px; top: 50%; transform: translateY(-50%); display: flex; gap: 2px; }
+        .search-box .search-actions button { border: none; background: transparent; padding: 4px 8px; border-radius: 50%; color: var(--text-secondary); }
+        .search-box .search-actions button:hover { background: rgba(0, 0, 0, 0.05); color: var(--text-primary); }
+        .search-box .search-actions .clear-btn { color: #dc3545; opacity: 0.7; }
+        .search-box .search-actions .clear-btn:hover { opacity: 1; }
+        .district-badge { background: linear-gradient(135deg, var(--ecom-primary), var(--ecom-dark)); color: white; padding: 4px 16px; border-radius: 20px; font-size: 0.8rem; }
+        .admin-avatar { width: 36px; height: 36px; border-radius: 50%; background: linear-gradient(135deg, var(--ecom-primary), var(--ecom-dark)); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.2rem; }
+        .login-time { font-size: 0.75rem; color: var(--text-muted); }
+        .no-results { padding: 2rem; text-align: center; color: var(--text-muted); }
+        .no-results i { font-size: 2rem; display: block; margin-bottom: 0.5rem; }
+        .empty-state { text-align: center; padding: 3rem 1rem; }
+        .empty-state i { font-size: 4rem; color: var(--text-muted); display: block; margin-bottom: 1rem; }
+        .theme-toggle-btn { background: var(--bg-card); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s ease; }
+        .theme-toggle-btn:hover { transform: rotate(20deg) scale(1.1); }
+        .session-lock-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(10px); z-index: 99999; display: flex; align-items: center; justify-content: center; animation: fadeInUp 0.5s ease-out; }
+        .session-lock-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 1.5rem; padding: 2.5rem; max-width: 420px; width: 100%; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); }
+        .session-lock-card .cocoa-leaf { font-size: 4.5rem; display: inline-block; animation: float 3s ease-in-out infinite; }
+        .session-lock-card h3 { color: var(--text-primary); font-weight: 700; }
+        .session-lock-card .form-control { background: var(--bg-input); border-color: var(--border-color); color: var(--text-primary); }
+        .session-lock-card .form-control:focus { border-color: var(--ecom-primary); box-shadow: 0 0 0 0.2rem rgba(46, 125, 50, 0.2); }
+        .password-modal .modal-content { background: var(--bg-modal); border: 1px solid var(--border-color); border-radius: 1.5rem; color: var(--text-primary); }
+        .password-modal .modal-header { border-bottom: 1px solid var(--border-color); }
+        .password-modal .modal-footer { border-top: 1px solid var(--border-color); }
+        .password-modal .form-control { background: var(--bg-input); border-color: var(--border-color); color: var(--text-primary); }
+        .password-modal .form-control:focus { border-color: var(--ecom-primary); box-shadow: 0 0 0 0.2rem rgba(46, 125, 50, 0.2); }
+        .password-input-group { position: relative; }
+        .password-input-group .toggle-password { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--text-muted); background: none; border: none; }
+        .password-input-group .toggle-password:hover { color: var(--text-primary); }
+        .modal-content { background: var(--bg-modal); border: 1px solid var(--border-color); color: var(--text-primary); }
+        .modal-header { border-bottom: 1px solid var(--border-color); }
+        .modal-footer { border-top: 1px solid var(--border-color); }
+        .modal .btn-close { filter: invert(var(--btn-close-filter, 0)); }
+        .progress { background: var(--bg-table-header); border-radius: 10px; }
+        .progress-bar { background: var(--ecom-primary); transition: width 0.5s ease; }
+        .progress-bar.bg-warning { background: var(--ecom-gold); }
+        .progress-bar.bg-danger { background: var(--ecom-accent); }
+        .ghana-footer { font-size: 0.8rem; color: var(--text-muted); border-top: 1px solid var(--border-color); padding-top: 1rem; margin-top: 2rem; text-align: center; }
+        .form-control { background: var(--bg-input); border-color: var(--border-color); color: var(--text-primary); }
+        .form-control:focus { background: var(--bg-input); border-color: var(--ecom-primary); box-shadow: 0 0 0 0.2rem rgba(46, 125, 50, 0.2); color: var(--text-primary); }
+        .form-control::placeholder { color: var(--text-muted); }
+        .form-select { background: var(--bg-input); border-color: var(--border-color); color: var(--text-primary); }
+        .form-select:focus { border-color: var(--ecom-primary); box-shadow: 0 0 0 0.2rem rgba(46, 125, 50, 0.2); }
+        .form-label { color: var(--text-secondary); }
+        .text-muted { color: var(--text-muted) !important; }
+        .top-farmer { background: #fef7ed; border-left: 4px solid var(--ecom-gold); box-shadow: inset 0 0 20px rgba(249, 168, 37, 0.1); }
+        [data-bs-theme="dark"] .top-farmer { background: #1e3347; }
+        .bonus-trophy { color: var(--ecom-gold); }
+        .quick-stat-item { background: var(--bg-card); border: 1px solid var(--border-color); padding: 0.5rem 1rem; border-radius: 8px; transition: all 0.3s ease; color: var(--text-primary); }
+        .quick-stat-item:hover { transform: translateY(-2px); box-shadow: 0 4px 15px var(--shadow-hover); }
+        .quick-stat-item strong { color: var(--ecom-primary); }
+        .record-count-badge { background: var(--bg-table-header); padding: 2px 10px; border-radius: 20px; font-size: 0.75rem; color: var(--text-secondary); }
+        .reset-banner { background: #fff3cd; border: 2px solid var(--ecom-gold); border-radius: 12px; padding: 12px 20px; margin-bottom: 1rem; animation: slideDown 0.5s ease-out; color: #856404; }
+        [data-bs-theme="dark"] .reset-banner { background: #2a1f0d; border-color: var(--ecom-gold); color: var(--ecom-gold); }
+        .reset-banner .countdown { font-size: 1.2rem; font-weight: 700; }
+        .reset-banner .countdown .days { color: var(--ecom-gold); }
+        .do-report-card { background: var(--bg-card); border-left: 4px solid var(--ecom-dark); }
+        .report-summary { background: var(--bg-table-header); border-radius: 8px; padding: 1rem; }
+        .ecom-logo-text { font-weight: 800; letter-spacing: -1px; }
+        .ecom-logo-text .e { color: var(--ecom-primary); }
+        .ecom-logo-text .com { color: var(--ecom-gold); }
+        .ecom-tree { color: var(--ecom-primary); }
+        .cocoa-leaf { display: inline-block; animation: float 3s ease-in-out infinite; font-size: 3.5rem; }
+        .cocoa-leaf-sm { font-size: 2rem; }
+        .cocoa-leaf-lg { font-size: 4.5rem; }
+        .entrance-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(15px); z-index: 999999; display: flex; align-items: center; justify-content: center; animation: fadeInUp 0.6s ease-out; }
+        .entrance-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 1.5rem; padding: 2.5rem; max-width: 420px; width: 100%; box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5); text-align: center; }
+        .entrance-card .cocoa-leaf { font-size: 4rem; display: inline-block; animation: float 3s ease-in-out infinite, pulse 2s ease-in-out infinite; }
+        .entrance-card h3 { color: var(--text-primary); font-weight: 700; }
+        .entrance-card .form-control { background: var(--bg-input); border-color: var(--border-color); color: var(--text-primary); }
+        .entrance-card .form-control:focus { border-color: var(--ecom-primary); box-shadow: 0 0 0 0.2rem rgba(46, 125, 50, 0.2); }
+        .entrance-card .form-control::placeholder { color: var(--text-muted); }
+        .export-dropdown-group { display: flex; gap: 5px; flex-wrap: wrap; align-items: center; }
+        .loan-status-pending { color: var(--loan-color); font-weight: 600; }
+        .loan-status-paid { color: var(--ecom-primary); font-weight: 600; }
+        .action-buttons { display: flex; gap: 3px; flex-wrap: wrap; }
+        .action-buttons .btn { padding: 2px 6px; font-size: 0.75rem; }
+
+        .farmer-type-badge-registered { background: #2E7D32; color: white; padding: 2px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 600; }
+        .farmer-type-badge-casual { background: #F9A825; color: #1e2a3a; padding: 2px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: 600; }
+        .farmer-status-badge-active { background: #17a2b8; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.6rem; font-weight: 600; }
+        .farmer-status-badge-archived { background: #6c757d; color: white; padding: 2px 8px; border-radius: 12px; font-size: 0.6rem; font-weight: 600; }
+
+        .searchable-dropdown { position: relative; }
+        .searchable-dropdown .dropdown-list { position: absolute; top: 100%; left: 0; right: 0; max-height: 200px; overflow-y: auto; background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; z-index: 1050; display: none; box-shadow: 0 8px 20px var(--shadow-color); }
+        .searchable-dropdown .dropdown-list.show { display: block; }
+        .searchable-dropdown .dropdown-item { padding: 8px 12px; cursor: pointer; color: var(--text-primary); border-bottom: 1px solid var(--border-color); }
+        .searchable-dropdown .dropdown-item:hover { background: var(--bg-table-header); }
+        .searchable-dropdown .dropdown-item.selected { background: var(--ecom-primary); color: white; }
+
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideInLeft { from { opacity: 0; transform: translateX(-30px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes slideInRight { from { opacity: 0; transform: translateX(30px); } to { opacity: 1; transform: translateX(0); } }
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); max-height: 0; } to { opacity: 1; transform: translateY(0); max-height: 300px; } }
+        @keyframes shake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-10px); } 75% { transform: translateX(10px); } }
+        .animate-fade-up { animation: fadeInUp 0.6s ease-out forwards; }
+        .animate-fade-down { animation: fadeInDown 0.5s ease-out forwards; }
+        .animate-slide-left { animation: slideInLeft 0.5s ease-out forwards; }
+        .animate-slide-right { animation: slideInRight 0.5s ease-out forwards; }
+        .animate-float { animation: float 3s ease-in-out infinite; }
+        .animate-rotate { animation: rotateIn 0.5s ease-out forwards; }
+        .shake { animation: shake 0.5s ease; }
+        @keyframes rotateIn { from { opacity: 0; transform: rotate(-10deg) scale(0.8); } to { opacity: 1; transform: rotate(0deg) scale(1); } }
+
+        .ghana-card-group { display: flex; gap: 6px; align-items: stretch; }
+        .ghana-card-group .form-control { flex: 1; }
+        .ghana-card-group .btn-regenerate { display: flex; align-items: center; justify-content: center; padding: 0 12px; background: var(--bg-table-header); border: 1px solid var(--border-color); border-radius: 6px; color: var(--text-secondary); transition: all 0.2s ease; cursor: pointer; }
+        .ghana-card-group .btn-regenerate:hover { background: var(--ecom-primary); color: white; border-color: var(--ecom-primary); transform: rotate(60deg) scale(1.05); }
+        .ghana-card-group .btn-regenerate:active { transform: rotate(120deg) scale(0.95); }
+        .ghana-card-group .form-control:read-only { background: var(--bg-table-header); cursor: default; }
+        .ghana-card-hint { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; display: block; }
+        .dob-field { transition: all 0.3s ease; }
+        .tel-field .tel-required-hint { color: var(--text-muted); font-size: 0.75rem; }
+        .tel-field .tel-required-hint .required-star { color: #dc3545; }
+        .tel-badge { background: var(--bg-table-header); padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; color: var(--text-secondary); font-family: monospace; }
+        .farmers-table thead { background: var(--ecom-primary) !important; color: white !important; }
+        .farmers-table thead th { background: var(--ecom-primary) !important; color: white !important; border-color: var(--ecom-dark) !important; }
+        [data-bs-theme="dark"] .farmers-table thead { background: var(--ecom-dark) !important; }
+        [data-bs-theme="dark"] .farmers-table thead th { background: var(--ecom-dark) !important; }
+    </style>
+</head>
+<body>
+
+    <!-- ============ ENTRANCE PASSWORD OVERLAY ============ -->
+    <div class="entrance-overlay" id="entranceOverlay">
+        <div class="entrance-card animate-fade-up">
+            <div class="text-center mb-4">
+                <div class="cocoa-leaf">🌿</div>
+                <h6 class="ecom-logo-text"><span class="e">Agro</span><span class="com">Ecom</span> Ghana</h6>
+                <p class="text-muted">Cocoa Management System</p>
+                <div class="bg-ecom mt-2"></div>
+            </div>
+            <form id="entranceForm">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold"><i class="bi bi-shield-lock"></i> Enter Password</label>
+                    <div class="password-input-group">
+                        <input type="password" class="form-control" id="entrancePassword" placeholder="Enter system password" autofocus />
+                        <button class="toggle-password" id="toggleEntrancePassword" type="button"><i class="bi bi-eye"></i></button>
+                    </div>
+                    <div id="entranceError" class="text-danger small mt-2 d-none">❌ Incorrect password</div>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold"><i class="bi bi-unlock me-2"></i>Access System</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ============ MAIN APP ============ -->
+    <div id="mainApp" style="display:none;">
+        <div class="container py-4 animate-slide-left">
+            <!-- Header -->
+            <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2 animate-fade-down">
+                <div>
+                    <h6 class="fw-bold" style="color: var(--text-primary);">
+                        <span class="cocoa-leaf cocoa-leaf-sm me-2">🌿</span>
+                        <span class="ecom-logo-text"><span class="e">Agro</span><span class="com">Ecom</span></span> <span class="text-muted">·</span> Ghana
+                    </h6>
+                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                        <span class="district-badge"><i class="bi bi-pin-map me-1"></i>Cocoa Purchase Clerk · Ghana</span>
+                        <span class="text-muted small"><i class="bi bi-people me-1"></i><span id="headerFarmerCount">0</span> farmers</span>
+                        <span class="text-muted small"><i class="bi bi-database"></i> <span id="storageCount">0</span> records</span>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <button class="theme-toggle-btn" id="themeToggleBtn" title="Toggle theme"><i class="bi bi-moon-fill" id="themeIcon"></i></button>
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="admin-avatar">A</div>
+                        <div><span class="fw-semibold d-block" style="font-size:0.9rem; color: var(--text-primary);">Admin</span><span class="login-time" id="loginTimeDisplay">Online</span></div>
+                    </div>
+                    <button class="btn btn-outline-danger btn-sm" id="logoutBtn"><i class="bi bi-box-arrow-right"></i> Logout</button>
+                </div>
+            </div>
+
+            <div id="resetBannerContainer"></div>
+
+            <!-- Tabs -->
+            <ul class="nav nav-tabs mb-4" id="mainTabs" role="tablist">
+                <li class="nav-item"><button class="nav-link active" id="dashboard-tab" data-bs-toggle="tab" data-bs-target="#dashboard"><i class="bi bi-speedometer2 me-1"></i> Dashboard</button></li>
+                <li class="nav-item"><button class="nav-link" id="farmers-tab" data-bs-toggle="tab" data-bs-target="#farmers"><i class="bi bi-people me-1"></i> Farmers</button></li>
+                <li class="nav-item"><button class="nav-link" id="pc-tab" data-bs-toggle="tab" data-bs-target="#pc"><i class="bi bi-shop me-1"></i>Purchase Clerk Records</button></li>
+                <li class="nav-item"><button class="nav-link" id="cash-tab" data-bs-toggle="tab" data-bs-target="#cash"><i class="bi bi-cash-stack me-1"></i> Cash</button></li>
+                <li class="nav-item"><button class="nav-link" id="stock-tab" data-bs-toggle="tab" data-bs-target="#stock"><i class="bi bi-box-seam me-1"></i> Stock/Dispatch</button></li>
+                <li class="nav-item"><button class="nav-link" id="loan-tab" data-bs-toggle="tab" data-bs-target="#loan"><i class="bi bi-credit-card me-1"></i> Purchase Clerk Loans</button></li>
+                <li class="nav-item"><button class="nav-link" id="bonus-tab" data-bs-toggle="tab" data-bs-target="#bonus"><i class="bi bi-gift me-1"></i> Bonus</button></li>
+                <li class="nav-item"><button class="nav-link" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings"><i class="bi bi-gear me-1"></i> Settings</button></li>
+            </ul>
+
+            <div class="tab-content">
+                <!-- ========= DASHBOARD ========= -->
+                <div class="tab-pane fade show active" id="dashboard">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                        <h5 class="mb-0" style="color: var(--text-primary);"><i class="bi bi-speedometer2 me-2"></i>Dashboard</h5>
+                        <div class="dropdown">
+                            <button class="btn btn-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-lightning-charge-fill me-1"></i>Quick Actions
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#farmerModal"><i class="bi bi-person-plus me-2"></i>Register Farmer</a></li>
+                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#pcModal"><i class="bi bi-shop me-2"></i>Add Purchse Clerk Record</a></li>
+                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#cashInModal"><i class="bi bi-cash-coin me-2"></i>Record Cash In</a></li>
+                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#stockOutModal"><i class="bi bi-truck me-2"></i>Record Dispatch</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#" id="quickExportBackup"><i class="bi bi-download me-2"></i>Export Backup</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="row g-4">
+                        <div class="col-md-3"><div class="dashboard-stat"><div class="stat-icon">👨‍🌾</div><h4 id="statFarmers">0</h4><span>Active Farmers</span></div></div>
+                        <div class="col-md-3"><div class="dashboard-stat"><div class="stat-icon">📋</div><h4 id="statPcRecords">0</h4><span>Purchase Clerk Records</span></div></div>
+                        <div class="col-md-3"><div class="dashboard-stat"><div class="stat-icon">💰</div><h4 id="statCashBalance">0</h4><span>Cash Balance (GHS)</span></div></div>
+                        <div class="col-md-3"><div class="dashboard-stat"><div class="stat-icon">📦</div><h4 id="statStockBalance">0</h4><span>Stock Balance (kg)</span></div></div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="card animate-slide-right">
+                                <div class="card-header"><i class="bi bi-speedometer2 me-2"></i>Quick Overview</div>
+                                <div class="card-body">
+                                    <div class="d-flex flex-wrap gap-3">
+                                        <div class="quick-stat-item"><i class="bi bi-arrow-down-circle text-success"></i> Cash In: <strong id="statCashIn">0</strong></div>
+                                        <div class="quick-stat-item"><i class="bi bi-arrow-up-circle text-danger"></i> Cash Out: <strong id="statCashOut">0</strong></div>
+                                        <div class="quick-stat-item"><i class="bi bi-box-seam text-primary"></i> Stock In: <strong id="statStockIn">0 kg</strong></div>
+                                        <div class="quick-stat-item"><i class="bi bi-truck text-warning"></i> Dispatched: <strong id="statStockOut">0 kg</strong></div>
+                                        <div class="quick-stat-item"><i class="bi bi-gift text-warning"></i> Total Bonus: <strong id="statTotalBonus">0 GHS</strong></div>
+                                        <div class="quick-stat-item"><i class="bi bi-credit-card text-warning"></i> Active Loans: <strong id="statActiveLoans">0</strong></div>
+                                        <div class="quick-stat-item"><i class="bi bi-clock-history text-info"></i> Dispatches: <strong id="statDispatchCount">0</strong></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-md-8">
+                            <div class="card animate-slide-left">
+                                <div class="card-header"><i class="bi bi-trophy-fill text-warning me-2"></i>🏆 Farmer of the Year <span class="text-muted small" id="topFarmerYear">2026</span></div>
+                                <div class="card-body" id="topFarmerDisplay"><div class="text-muted">No records yet.</div></div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card animate-slide-right">
+                                <div class="card-header"><i class="bi bi-clock-history me-2"></i>System Status</div>
+                                <div class="card-body">
+                                    <div><small>Total records:</small> <strong id="dashboardTotalRecords" style="color:var(--text-primary);">0</strong></div>
+                                    <div><small>Dispatches:</small> <strong id="dashboardDispatchCount" style="color:var(--text-primary);">0</strong></div>
+                                    <div><small>Data age:</small> <strong id="dashboardDataAge" style="color:var(--text-primary);">0 days</strong></div>
+                                    <hr>
+                                    <div><small>Active farmers:</small> <strong id="dashboardActiveFarmers" style="color:var(--text-primary);">0</strong></div>
+                                    <div><small>Archived farmers:</small> <strong id="dashboardArchivedFarmers" style="color:var(--text-primary);">0</strong></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========= FARMERS ========= -->
+                <div class="tab-pane fade" id="farmers">
+                    <div class="d-flex justify-content-between mb-3 flex-wrap gap-2">
+                        <div class="d-flex gap-2 align-items-center flex-wrap">
+                            <h5 class="mb-0" style="color: var(--text-primary);"><i class="bi bi-people me-2"></i>Farmers</h5>
+                            <div class="search-box">
+                                <input type="text" class="form-control form-control-sm" id="farmerSearchInput" placeholder="🔍 Search..." autocomplete="off" />
+                                <div class="search-actions"><button class="clear-btn" id="clearSearchBtn"><i class="bi bi-x-circle"></i></button></div>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-outline-secondary btn-sm" id="toggleArchivedView"><i class="bi bi-archive me-1"></i> Show Archived</button>
+                            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#farmerModal"><i class="bi bi-plus-circle"></i> Register</button>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body p-0">
+                            <div style="max-height:500px;overflow-y:auto;">
+                                <table class="table table-hover mb-0 farmers-table">
+                                    <thead style="position:sticky;top:0;z-index:10;">
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Full Name</th>
+                                            <th>Ghana Card</th>
+                                            <th>Type</th>
+                                            <th>Telephone</th>
+                                            <th>Station</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="farmersBody"></tbody>
+                                </table>
+                                <div id="noFarmersFound" class="no-results d-none"><i class="bi bi-search"></i><p>No farmers match.</p></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-2 text-muted small">Showing <span id="visibleFarmerCount">0</span> of <span id="totalFarmerCount">0</span> farmers</div>
+                </div>
+
+                <!-- ========= Purchase Clerk RECORDS ========= -->
+                <div class="tab-pane fade" id="pc">
+                    <div class="d-flex justify-content-between mb-3 flex-wrap gap-2">
+                        <h5 class="mb-0" style="color: var(--text-primary);"><i class="bi bi-shop me-2"></i>Purchase Clerk Records</h5>
+                        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#pcModal"><i class="bi bi-plus-circle"></i> Add Purchase Clerk Record</button>
+                    </div>
+                    <div class="card">
+                        <div class="card-body p-0" style="max-height:500px;overflow-y:auto;">
+                            <table class="table table-hover mb-0">
+                                <thead style="position:sticky;top:0;z-index:10;"><tr><th>Farmer</th><th>Date</th><th>kg</th><th>Bags</th><th>Rate</th><th>Payment</th><th>Station</th><th>Actions</th></tr></thead>
+                                <tbody id="pcBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========= CASH ========= -->
+                <div class="tab-pane fade" id="cash">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header"><i class="bi bi-arrow-down-circle text-success"></i> Cash In <span class="text-muted small"></span></div>
+                                <div class="card-body">
+                                    <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#cashInModal"><i class="bi bi-plus-circle"></i> Record Cash In</button>
+                                    <div class="mt-3" style="max-height:300px;overflow-y:auto;">
+                                        <table class="table table-sm table-hover">
+                                            <thead><tr><th>Date</th><th>Source</th><th>Purpose</th><th>Amount</th><th>Actions</th></tr></thead>
+                                            <tbody id="cashInBody"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header"><i class="bi bi-arrow-up-circle text-danger"></i> Cash Out <span class="text-muted small"></span></div>
+                                <div class="card-body">
+                                    <div class="mt-3" style="max-height:300px;overflow-y:auto;">
+                                        <table class="table table-sm table-hover">
+                                            <thead><tr><th>Date</th><th>PC</th><th>Farmer</th><th>Amount</th></tr></thead>
+                                            <tbody id="cashOutBody"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">Cash Balance Report</div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4"><strong>Total Cash In:</strong> <span id="totalCashIn" class="text-success">0.00 GHS</span></div>
+                                <div class="col-md-4"><strong>Total Cash Out:</strong> <span id="totalCashOut" class="text-danger">0.00 GHS</span></div>
+                                <div class="col-md-4"><strong>Balance:</strong> <span id="cashBalanceDisplay" class="text-primary fw-bold">0.00 GHS</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========= STOCK/DISPATCH ========= -->
+                <div class="tab-pane fade" id="stock">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header"><i class="bi bi-box-seam"></i> Stock In <span class="text-muted small"></span></div>
+                                <div class="card-body">
+                                    <div class="mt-3" style="max-height:300px;overflow-y:auto;">
+                                        <table class="table table-sm table-hover">
+                                            <thead><tr><th>Date</th><th>PC</th><th>Bags</th><th>kg</th><th>Amount</th><th></th></tr></thead>
+                                            <tbody id="stockInBody"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header"><i class="bi bi-truck"></i> Dispatch to AgroEcom Depo</div>
+                                <div class="card-body">
+                                    <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#stockOutModal"><i class="bi bi-plus-circle"></i> Record Dispatch</button>
+                                    <button class="btn btn-info btn-sm ms-2" id="generateDispatchReport"><i class="bi bi-file-earmark-text"></i> Dispatch Report</button>
+                                    <div class="mt-3" style="max-height:300px;overflow-y:auto;">
+                                        <table class="table table-sm table-hover">
+                                            <thead><tr><th>Date</th><th>PC</th><th>Bags</th><th>kg</th><th>Type</th><th></th></tr></thead>
+                                            <tbody id="stockOutBody"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mt-3 animate-fade-up">
+                        <div class="card-header">
+                            <i class="bi bi-download me-2"></i>Export Reports
+                            <span class="text-muted small ms-2">(Stock In, Dispatch & Ledger)</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="export-dropdown-group">
+                                <button class="btn btn-outline-primary btn-sm" id="exportStockInBtn"><i class="bi bi-box-seam"></i> Stock In CSV</button>
+                                <button class="btn btn-outline-warning btn-sm" id="exportStockOutBtn"><i class="bi bi-truck"></i> Dispatch CSV</button>
+                                <button class="btn btn-outline-success btn-sm" id="exportLedgerBtn"><i class="bi bi-journal"></i> Ledger CSV</button>
+                                <button class="btn btn-outline-secondary btn-sm" id="exportAllStockBtn"><i class="bi bi-file-earmark-zip"></i> All Stock Reports</button>
+                            </div>
+                            <small class="text-muted d-block mt-2"><i class="bi bi-info-circle"></i> Export all stock-related data as CSV files for reporting</small>
+                        </div>
+                    </div>
+
+                    <div class="card mt-3">
+                        <div class="card-header">Stock & Dispatch Report</div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3"><strong>Total Stock In:</strong> <span id="stockTotalIn" class="text-success">0 kg</span></div>
+                                <div class="col-md-3"><strong>Total Dispatched:</strong> <span id="stockTotalOut" class="text-danger">0 kg</span></div>
+                                <div class="col-md-3"><strong>Stock Balance:</strong> <span id="stockBalanceDisplay" class="text-primary fw-bold">0 kg</span></div>
+                                <div class="col-md-3"><strong>Total Bags:</strong> <span id="stockTotalBags" class="text-info">0</span></div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-md-4"><strong>Total Dispatches:</strong> <span id="dispatchCountDisplay" class="text-warning">0</span></div>
+                                <div class="col-md-4"><strong>Total kg Dispatched:</strong> <span id="dispatchKgDisplay" class="text-warning">0 kg</span></div>
+                                <div class="col-md-4"><strong>Total Bags Dispatched:</strong> <span id="dispatchBagsDisplay" class="text-warning">0</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mt-3" id="dispatchReportCard" style="display:none;">
+                        <div class="card-header">Dispatch Report <button class="btn btn-sm btn-outline-secondary float-end" id="closeDispatchReport"><i class="bi bi-x"></i></button></div>
+                        <div class="card-body" id="dispatchReportBody"></div>
+                    </div>
+
+                    <div class="card mt-3">
+                        <div class="card-header">Payment to Cocoa P.C Ledger</div>
+                        <div class="card-body p-0" style="max-height:300px;overflow-y:auto;">
+                            <table class="table table-sm table-hover mb-0">
+                                <thead><tr><th>Date</th><th>PC Name</th><th>Amount</th><th>Purpose</th></tr></thead>
+                                <tbody id="pcLedgerBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========= Purchase Clerk LOANS ========= -->
+                <div class="tab-pane fade" id="loan">
+                    <div class="d-flex justify-content-between mb-3 flex-wrap gap-2">
+                        <h5 class="mb-0" style="color: var(--text-primary);"><i class="bi bi-credit-card me-2"></i>Purchase Clerk to Farmer Loans</h5>
+                        <button class="btn btn-loan btn-sm" data-bs-toggle="modal" data-bs-target="#loanModal"><i class="bi bi-plus-circle"></i> Record Loan</button>
+                    </div>
+                    <div class="card">
+                        <div class="card-body p-0" style="max-height:400px;overflow-y:auto;">
+                            <table class="table table-hover mb-0">
+                                <thead style="position:sticky;top:0;z-index:10;"><tr><th>Date</th><th>Farmer</th><th>Amount (GHS)</th><th>Purpose</th><th>Status</th><th>Actions</th></tr></thead>
+                                <tbody id="loanBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <i class="bi bi-download me-2"></i>Loan Reports
+                            <span class="text-muted small ms-2">(Export loan data)</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="export-dropdown-group">
+                                <button class="btn btn-outline-loan btn-sm" id="exportActiveLoansBtn"><i class="bi bi-credit-card"></i> Active Loans CSV</button>
+                                <button class="btn btn-outline-success btn-sm" id="exportPaidLoansBtn"><i class="bi bi-check-circle"></i> Paid Loans CSV</button>
+                                <button class="btn btn-outline-secondary btn-sm" id="exportAllLoansBtn"><i class="bi bi-file-earmark-zip"></i> All Loans CSV</button>
+                            </div>
+                            <small class="text-muted d-block mt-2"><i class="bi bi-info-circle"></i> Export loan records for farmers</small>
+                        </div>
+                    </div>
+                    <div class="card mt-3">
+                        <div class="card-header">Loan Summary</div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4"><strong>Total Loans Given:</strong> <span id="totalLoans" class="text-primary">0.00 GHS</span></div>
+                                <div class="col-md-4"><strong>Total Repaid:</strong> <span id="totalRepaid" class="text-success">0.00 GHS</span></div>
+                                <div class="col-md-4"><strong>Outstanding:</strong> <span id="totalOutstanding" class="text-danger">0.00 GHS</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========= BONUS ========= -->
+                <div class="tab-pane fade" id="bonus">
+                    <div class="row g-3 align-items-end mb-3">
+                        <div class="col-md-3">
+                            <label class="form-label">Year</label>
+                            <input type="number" class="form-control" id="bonusYear" value="2026" />
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-primary w-100" id="calculateBonusBtn"><i class="bi bi-calculator me-2"></i>Calculate</button>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-outline-secondary w-100" id="exportBonusBtn"><i class="bi bi-download me-2"></i>Export CSV</button>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-warning w-100" id="payBonusBtn"><i class="bi bi-cash me-2"></i>Pay Bonuses</button>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">Bonus Summary · <span id="bonusYearDisplay">2026</span></div>
+                        <div class="card-body p-0" style="max-height:500px;overflow-y:auto;">
+                            <table class="table table-hover mb-0">
+                                <thead style="position:sticky;top:0;z-index:10;"><tr><th>ID</th><th>Name</th><th>Total kg</th><th>Bags</th><th>Payment</th><th>Bonus Rate</th><th>Bonus</th><th>Status</th></tr></thead>
+                                <tbody id="bonusBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card mt-3">
+                        <div class="card-header">Bonus Payment History</div>
+                        <div class="card-body p-0" style="max-height:300px;overflow-y:auto;">
+                            <table class="table table-sm table-hover mb-0">
+                                <thead><tr><th>Date</th><th>Farmer</th><th>Amount</th><th>Year</th><th>Status</th></tr></thead>
+                                <tbody id="bonusHistoryBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========= SETTINGS ========= -->
+                <div class="tab-pane fade" id="settings">
+                    <h5 class="animate-fade-down" style="color: var(--text-primary);"><i class="bi bi-gear me-2"></i>Settings</h5>
+                    <div class="row g-3 mt-2">
+                        <div class="col-md-6">
+                            <div class="card animate-slide-left">
+                                <div class="card-header">Payment & Bonus Rules</div>
+                                <div class="card-body">
+                                    <div class="mb-2"><label class="form-label">Price per kg (GHS)</label><input type="number" step="0.01" class="form-control" id="pricePerKg" value="0.50" /></div>
+                                    <div class="mb-2"><label class="form-label">Bonus Rate (%)</label><input type="number" step="0.1" class="form-control" id="bonusRate" value="5" /></div>
+                                    <div class="mb-2"><label class="form-label">Volume Tier (kg)</label><input type="number" class="form-control" id="volumeTier" value="10000" /></div>
+                                    <div class="mb-2"><label class="form-label">Volume Bonus Extra (%)</label><input type="number" step="0.1" class="form-control" id="volumeBonusExtra" value="10" /></div>
+                                    <button class="btn btn-sm btn-outline-primary" id="saveSettingsBtn"><i class="bi bi-save me-1"></i>Save</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card animate-slide-right">
+                                <div class="card-header"><i class="bi bi-pin-map me-2"></i>System</div>
+                                <div class="card-body">
+                                    <div class="alert alert-success" style="background:var(--bg-alert-success);border-color:var(--border-alert-success);color:var(--color-alert-success);">
+                                        <i class="bi bi-check-circle-fill me-2"></i><strong>Cocoa P.C · Ghana</strong>
+                                    </div>
+                                    <div class="mt-3 p-3 rounded" style="background:var(--bg-input);border:1px solid var(--border-color);">
+                                        <h6><i class="bi bi-stats"></i> Stats</h6>
+                                        <div class="row">
+                                            <div class="col-6"><small>Active Farmers:</small> <strong id="settingsActiveFarmerCount" style="color:var(--text-primary);">0</strong></div>
+                                            <div class="col-6"><small>Archived Farmers:</small> <strong id="settingsArchivedFarmerCount" style="color:var(--text-primary);">0</strong></div>
+                                            <div class="col-6"><small>Total Records:</small> <strong id="settingsRecordCount" style="color:var(--text-primary);">0</strong></div>
+                                            <div class="col-6"><small>Total kg:</small> <strong id="settingsTotalKg" style="color:var(--text-primary);">0</strong></div>
+                                            <div class="col-6"><small>Dispatches:</small> <strong id="settingsDispatchCount" style="color:var(--text-primary);">0</strong></div>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3">
+                                        <h6><i class="bi bi-database me-1"></i>Records</h6>
+                                        <small class="text-muted">Total records stored: <span id="storageCount">0</span></small>
+                                    </div>
+                                    <div class="mt-3">
+                                        <h6><i class="bi bi-clock-history me-1"></i>Data Retention</h6>
+                                        <div id="retentionStatus" class="small"></div>
+                                        <div class="d-flex gap-2 mt-2 flex-wrap">
+                                            <button class="btn btn-danger btn-sm" id="resetSettingsOnlyBtn"><i class="bi bi-gear me-1"></i>Reset Settings Only</button>
+                                            <button class="btn btn-danger btn-sm" id="factoryResetBtn"><i class="bi bi-trash me-1"></i>⚠️ Factory Reset</button>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3">
+                                        <h6><i class="bi bi-shield-check me-1"></i>Backup & Restore</h6>
+                                        <div class="d-flex gap-2 flex-wrap">
+                                            <button class="btn btn-outline-success btn-sm" id="exportBackupBtn"><i class="bi bi-download me-1"></i>Export Backup (JSON)</button>
+                                            <button class="btn btn-outline-warning btn-sm" id="importBackupBtn"><i class="bi bi-upload me-1"></i>Restore Backup</button>
+                                            <input type="file" id="importBackupInput" accept=".json" style="display:none" />
+                                        </div>
+                                        <small class="text-muted d-block mt-1"><i class="bi bi-info-circle"></i> Export all data (farmers, records, settings) as a JSON file.</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ghana-footer">
+                <span class="cocoa-leaf cocoa-leaf-sm me-1">🌿</span> AgroEcom Ghana · Cocoa P.C · 64kg/bag
+                <span class="mx-2">·</span><span id="footerRecordCount">0 records</span>
+                <span class="mx-2">·</span><span class="text-muted" id="footerDataAge">Data age: 0 days</span>
+                <span class="mx-2">·</span><span class="text-muted" id="footerDispatchCount">Dispatches: 0</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========= MODALS ========= -->
+
+    <!-- ===== NEW TWO‑TAB FARMER REGISTRATION MODAL ===== -->
+    <div class="modal fade" id="farmerModal" tabindex="-1" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content animate-rotate">
+                <div class="modal-header" style="background: var(--ecom-primary); color: white;">
+                    <h5 class="modal-title"><i class="bi bi-person-plus me-2"></i>Farmer Registration</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="farmerEditId" />
+                    <!-- Tabs -->
+                    <ul class="nav nav-pills mb-3" id="farmerTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="main-tab" data-bs-toggle="pill" data-bs-target="#mainFormContainer" type="button" role="tab">Main Farmer</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="casual-tab" data-bs-toggle="pill" data-bs-target="#casualFormContainer" type="button" role="tab">Casual Farmer</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="farmerTabContent">
+                        <!-- Main Form -->
+                        <div class="tab-pane fade show active" id="mainFormContainer" role="tabpanel">
+                            <form id="mainForm" novalidate>
+                                <div class="mb-3">
+                                    <label class="form-label">Full Name <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="mainName" placeholder="e.g. Kwame Mensah" required />
+                                    <div class="invalid-feedback">Full name is required.</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Ghana Card <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="mainGhanaCard" placeholder="GHA-123456789-0" required />
+                                    <div class="invalid-feedback">Format must be GHA-XXXXXXXXX-X (9 digits + check digit).</div>
+                                    <small class="text-muted">Format: GHA-XXXXXXXXX-X (9 digits + check digit)</small>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Telephone <span class="text-danger">*</span></label>
+                                    <input type="tel" class="form-control" id="mainTelephone" placeholder="e.g. 0244XXXXXX" required />
+                                    <div class="invalid-feedback">Telephone is required.</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Date of Birth <span class="text-danger">*</span></label>
+                                    <input type="date" class="form-control" id="mainDob" required />
+                                    <div class="invalid-feedback">Date of Birth is required.</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Station <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="mainStation" value="Purchase Clerk" readonly style="background-color: var(--bg-input); cursor: default;" />
+                                    <small class="text-muted">Read-only</small>
+                                </div>
+                                <button type="button" class="btn btn-primary w-100 mt-3" id="saveMainFarmerBtn"><i class="bi bi-check2 me-1"></i>Register Main Farmer</button>
+                            </form>
+                        </div>
+                        <!-- Casual Form -->
+                        <div class="tab-pane fade" id="casualFormContainer" role="tabpanel">
+                            <form id="casualForm" novalidate>
+                                <div class="mb-3">
+                                    <label class="form-label">Full Name <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="casualName" placeholder="e.g. Akua Mansa" required />
+                                    <div class="invalid-feedback">Full name is required.</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Ghana Card <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="casualGhanaCard" readonly style="background-color: var(--bg-input); cursor: default;" />
+                                    <small class="text-muted">Auto-generated WALKIN-xxxxx. Read-only.</small>
+                                </div>
+                                <button type="button" class="btn btn-warning w-100 mt-3" id="saveCasualFarmerBtn"><i class="bi bi-check2 me-1"></i>Register Casual Farmer</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Purchase Clerk Record Modal with Searchable Farmer Dropdown -->
+    <div class="modal fade" id="pcModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content animate-rotate">
+                <div class="modal-header"><h5 class="modal-title"><i class="bi bi-shop me-2"></i>Add Cocoa P.C Record</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body">
+                    <input type="hidden" id="pcEditId" />
+                    <div class="mb-2">
+                        <label class="form-label">Farmer <span class="text-danger">*</span></label>
+                        <div class="searchable-dropdown">
+                            <input type="text" class="form-control" id="pcFarmerSearch" placeholder="Search farmer..." autocomplete="off" />
+                            <input type="hidden" id="pcFarmerId" />
+                            <div class="dropdown-list" id="pcFarmerDropdown"></div>
+                            <small class="text-muted d-block mt-1">Type to search, click to select</small>
+                        </div>
+                    </div>
+                    <div class="mb-2"><label class="form-label">Date <span class="text-danger">*</span></label><input type="date" class="form-control" id="pcDate" /></div>
+                    <div class="row">
+                        <div class="col-6"><label class="form-label">Cocoa kg <span class="text-danger">*</span></label><input type="number" step="0.1" class="form-control" id="pcKg" placeholder="Weight in kg" /></div>
+                        <div class="col-6"><label class="form-label">Bags (64kg) <span class="text-danger">*</span></label><input type="number" step="0.01" class="form-control" id="pcBags" placeholder="Enter bags manually" /></div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-6"><label class="form-label">Rate (GHS/kg)</label><input type="number" step="0.01" class="form-control" id="pcRate" /></div>
+                        <div class="col-6"><label class="form-label">Payment (GHS)</label><input type="number" step="0.01" class="form-control" id="pcPayment" readonly style="font-weight:bold;color:var(--ecom-primary);" /></div>
+                    </div>
+                    <div class="mt-2"><label class="form-label">Station</label>
+                        <input class="form-control" id="pcStation" readonly value="Cocoa P.C Ghana" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn btn-primary" id="savePcBtn"><i class="bi bi-check2 me-1"></i>Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cash In Modal -->
+    <div class="modal fade" id="cashInModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content animate-rotate">
+                <div class="modal-header"><h5 class="modal-title"><i class="bi bi-arrow-down-circle text-success me-2"></i>Cash In</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body">
+                    <input type="hidden" id="cashInEditId" />
+                    <div class="mb-2"><label class="form-label">Date <span class="text-danger">*</span></label><input type="date" class="form-control" id="cashInDate" /></div>
+                    <div class="mb-2"><label class="form-label">Source <span class="text-danger">*</span></label>
+                        <select class="form-select" id="cashInSource"><option value="Stock/D.O">Stock/D.O</option><option value="Ecom Depo">Ecom Depo</option><option value="Other">Other</option></select>
+                    </div>
+                    <div class="mb-2"><label class="form-label">Purpose <span class="text-danger">*</span></label>
+                        <select class="form-select" id="cashInPurpose"><option value="Cocoa Purchase">Cocoa Purchase</option><option value="Operations">Operations</option><option value="Bonus Payment">Bonus Payment</option><option value="Other">Other</option></select>
+                    </div>
+                    <div class="mb-2"><label class="form-label">Amount (GHS) <span class="text-danger">*</span></label><input type="number" step="0.01" class="form-control" id="cashInAmount" placeholder="0.00" /></div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn btn-success" id="saveCashInBtn"><i class="bi bi-check2 me-1"></i>Record</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stock Out / Dispatch Modal -->
+    <div class="modal fade" id="stockOutModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content animate-rotate">
+                <div class="modal-header"><h5 class="modal-title"><i class="bi bi-truck me-2"></i>Dispatch to AgroEcom Depo</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body">
+                    <input type="hidden" id="stockOutEditId" />
+                    <div class="mb-2"><label class="form-label">Date <span class="text-danger">*</span></label><input type="date" class="form-control" id="stockOutDate" /></div>
+                    <div class="mb-2"><label class="form-label">Cocoa Purchase Clerk Name <span class="text-danger">*</span></label>
+                        <select class="form-select" id="stockOutPc"></select>
+                    </div>
+                    <div class="row">
+                        <div class="col-6"><label class="form-label">Bags (64kg) <span class="text-danger">*</span></label><input type="number" step="0.01" class="form-control" id="stockOutBags" placeholder="Number of bags" /></div>
+                        <div class="col-6"><label class="form-label">Total kg</label><input type="number" step="0.1" class="form-control" id="stockOutKg" readonly style="font-weight:bold;color:var(--ecom-primary);" /></div>
+                    </div>
+                    <div class="mt-2">
+                        <label class="form-label">Dispatch Note (Optional)</label>
+                        <input class="form-control" id="stockOutNote" placeholder="e.g. Batch #001, Truck 123" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn btn-warning" id="saveStockOutBtn"><i class="bi bi-check2 me-1"></i>Dispatch</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loan Modal -->
+    <div class="modal fade" id="loanModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content animate-rotate">
+                <div class="modal-header"><h5 class="modal-title"><i class="bi bi-credit-card me-2"></i>Record P.C Loan</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body">
+                    <input type="hidden" id="loanEditId" />
+                    <div class="mb-2"><label class="form-label">Farmer <span class="text-danger">*</span></label>
+                        <select class="form-select" id="loanFarmerId"></select>
+                        <small class="text-muted d-block mt-1"><i class="bi bi-info-circle"></i> Only Registered Farmers can receive loans.</small>
+                    </div>
+                    <div class="mb-2"><label class="form-label">Date <span class="text-danger">*</span></label><input type="date" class="form-control" id="loanDate" /></div>
+                    <div class="mb-2"><label class="form-label">Loan Amount (GHS) <span class="text-danger">*</span></label><input type="number" step="0.01" class="form-control" id="loanAmount" placeholder="0.00" /></div>
+                    <div class="mb-2"><label class="form-label">Purpose</label>
+                        <select class="form-select" id="loanPurpose"><option value="Cocoa Inputs">Cocoa Inputs</option><option value="Farming Equipment">Farming Equipment</option><option value="Personal">Personal</option><option value="Other">Other</option></select>
+                    </div>
+                    <div class="mb-2"><label class="form-label">Status</label>
+                        <select class="form-select" id="loanStatus"><option value="Active">Active</option><option value="Paid">Paid</option></select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn btn-loan" id="saveLoanBtn"><i class="bi bi-check2 me-1"></i>Record Loan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Farmer Detail Modal (replaces alert) -->
+    <div class="modal fade" id="farmerDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-person-circle me-2"></i>Farmer Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="farmerDetailBody">
+                    <!-- Filled by JS -->
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="liveToast" class="toast" role="alert">
+            <div class="d-flex"><div class="toast-body" id="toastMsg">Saved.</div><button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"></button></div>
+        </div>
+    </div>
+
+    <!-- ============ LOGOUT PASSWORD MODAL ============ -->
+    <div class="modal fade password-modal" id="logoutPasswordModal" tabindex="-1" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content animate-rotate">
+                <div class="modal-header"><h5 class="modal-title"><i class="bi bi-shield-lock me-2"></i>Verify Logout</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body">
+                    <p class="text-muted">Enter your password to confirm logout.</p>
+                    <div class="password-input-group">
+                        <input type="password" class="form-control" id="logoutPasswordInput" placeholder="Enter your password" />
+                        <button class="toggle-password" id="toggleLogoutPassword" type="button"><i class="bi bi-eye"></i></button>
+                    </div>
+                    <div id="logoutPasswordError" class="text-danger small mt-2 d-none">❌ Incorrect password</div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn btn-danger" id="confirmLogoutBtn"><i class="bi bi-box-arrow-right me-1"></i>Confirm Logout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js">
+    </script>
+    <script>
+        // ============================================================
+        //  ENTRANCE PASSWORD - SINGLE AUTHENTICATION
+        // ============================================================
+        const SYSTEM_PASSWORD = 'Ecom@2027';
+        const ADMIN_CREDENTIALS = { username: 'AgroEcom', password: 'Ecom@2027' };
+
+        document.getElementById('entranceForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const pass = document.getElementById('entrancePassword').value.trim();
+            const errorEl = document.getElementById('entranceError');
+            if (pass === SYSTEM_PASSWORD) {
+                document.getElementById('entranceOverlay').style.display = 'none';
+                document.getElementById('mainApp').style.display = 'block';
+                errorEl.classList.add('d-none');
+                document.getElementById('entrancePassword').value = '';
+                initApp();
+                document.getElementById('loginTimeDisplay').textContent = 'Logged in';
+                toast('🔐 System unlocked');
+            } else {
+                errorEl.classList.remove('d-none');
+                document.getElementById('entrancePassword').classList.add('shake');
+                setTimeout(() => document.getElementById('entrancePassword').classList.remove('shake'), 500);
+                document.getElementById('entrancePassword').value = '';
+                document.getElementById('entrancePassword').focus();
+            }
+        });
+
+        document.getElementById('toggleEntrancePassword').addEventListener('click', function() {
+            const input = document.getElementById('entrancePassword');
+            const icon = this.querySelector('i');
+            input.type = input.type === 'password' ? 'text' : 'password';
+            icon.className = input.type === 'password' ? 'bi bi-eye' : 'bi bi-eye-slash';
+        });
+
+        document.getElementById('entrancePassword').addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') document.getElementById('entranceForm').dispatchEvent(new Event('submit'));
+        });
+
+        // ============================================================
+        //  THEME MANAGEMENT
+        // ============================================================
+        function getSystemTheme() { return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'; }
+
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-bs-theme', theme);
+            localStorage.setItem('ecom_theme', theme);
+            document.getElementById('themeIcon').className = theme === 'dark' ? 'bi bi-sun-fill' : 'bi bi-moon-fill';
+            document.querySelectorAll('.btn-close').forEach(el => el.style.filter = theme === 'dark' ? 'invert(1)' :
+            'invert(0)');
+        }
+        document.getElementById('themeToggleBtn').addEventListener('click', function() {
+            const current = document.documentElement.getAttribute('data-bs-theme') || 'light';
+            setTheme(current === 'light' ? 'dark' : 'light');
+        });
+        (function initTheme() { const saved = localStorage.getItem('ecom_theme'); saved ? setTheme(saved) : setTheme(
+                getSystemTheme()); })();
+
+        // ============================================================
+        //  LOGOUT
+        // ============================================================
+        let logoutModal = null;
+
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            if (!logoutModal) logoutModal = new bootstrap.Modal(document.getElementById('logoutPasswordModal'));
+            document.getElementById('logoutPasswordInput').value = '';
+            document.getElementById('logoutPasswordError').classList.add('d-none');
+            logoutModal.show();
+        });
+
+        document.getElementById('toggleLogoutPassword').addEventListener('click', function() {
+            const input = document.getElementById('logoutPasswordInput');
+            const icon = this.querySelector('i');
+            input.type = input.type === 'password' ? 'text' : 'password';
+            icon.className = input.type === 'password' ? 'bi bi-eye' : 'bi bi-eye-slash';
+        });
+
+        document.getElementById('confirmLogoutBtn').addEventListener('click', function() {
+            const pass = document.getElementById('logoutPasswordInput').value.trim();
+            if (pass === ADMIN_CREDENTIALS.password) {
+                logoutModal.hide();
+                document.getElementById('entranceOverlay').style.display = 'flex';
+                document.getElementById('entrancePassword').value = '';
+                document.getElementById('entranceError').classList.add('d-none');
+                document.getElementById('mainApp').style.display = 'none';
+                toast('👋 Logged out');
+                document.getElementById('logoutPasswordInput').value = '';
+            } else {
+                document.getElementById('logoutPasswordError').classList.remove('d-none');
+                document.getElementById('logoutPasswordInput').classList.add('shake');
+                setTimeout(() => document.getElementById('logoutPasswordInput').classList.remove('shake'), 500);
+                document.getElementById('logoutPasswordInput').value = '';
+                document.getElementById('logoutPasswordInput').focus();
+            }
+        });
+
+        document.getElementById('logoutPasswordInput').addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') document.getElementById('confirmLogoutBtn').click();
+        });
+
+        // ============================================================
+        //  INDEXEDDB LAYER
+        // ============================================================
+        const DB_NAME = 'CocoaDB';
+        const DB_VERSION = 1;
+
+        let db = null;
+
+        function openDB() {
+            return new Promise((resolve, reject) => {
+                const request = indexedDB.open(DB_NAME, DB_VERSION);
+                request.onupgradeneeded = function(e) {
+                    const database = e.target.result;
+                    if (!database.objectStoreNames.contains('farmers')) {
+                        database.createObjectStore('farmers', { keyPath: 'id' });
+                    }
+                    if (!database.objectStoreNames.contains('records')) {
+                        database.createObjectStore('records', { keyPath: 'id' });
+                    }
+                    if (!database.objectStoreNames.contains('settings')) {
+                        database.createObjectStore('settings', { keyPath: 'key' });
+                    }
+                };
+                request.onsuccess = function(e) {
+                    db = e.target.result;
+                    resolve(db);
+                };
+                request.onerror = function(e) {
+                    reject(e.target.error);
+                };
+            });
+        }
+
+        function addData(storeName, data) {
+            return new Promise((resolve, reject) => {
+                if (!db) return reject('Database not open');
+                const tx = db.transaction(storeName, 'readwrite');
+                const store = tx.objectStore(storeName);
+                const request = store.add(data);
+                request.onsuccess = function() { resolve(request.result); };
+                request.onerror = function() { reject(request.error); };
+            });
+        }
+
+        function getAllData(storeName) {
+            return new Promise((resolve, reject) => {
+                if (!db) return reject('Database not open');
+                const tx = db.transaction(storeName, 'readonly');
+                const store = tx.objectStore(storeName);
+                const request = store.getAll();
+                request.onsuccess = function() { resolve(request.result); };
+                request.onerror = function() { reject(request.error); };
+            });
+        }
+
+        function getDataById(storeName, id) {
+            return new Promise((resolve, reject) => {
+                if (!db) return reject('Database not open');
+                const tx = db.transaction(storeName, 'readonly');
+                const store = tx.objectStore(storeName);
+                const request = store.get(id);
+                request.onsuccess = function() { resolve(request.result); };
+                request.onerror = function() { reject(request.error); };
+            });
+        }
+
+        function deleteData(storeName, id) {
+            return new Promise((resolve, reject) => {
+                if (!db) return reject('Database not open');
+                const tx = db.transaction(storeName, 'readwrite');
+                const store = tx.objectStore(storeName);
+                const request = store.delete(id);
+                request.onsuccess = function() { resolve(); };
+                request.onerror = function() { reject(request.error); };
+            });
+        }
+
+        function updateData(storeName, data) {
+            return new Promise((resolve, reject) => {
+                if (!db) return reject('Database not open');
+                const tx = db.transaction(storeName, 'readwrite');
+                const store = tx.objectStore(storeName);
+                const request = store.put(data);
+                request.onsuccess = function() { resolve(request.result); };
+                request.onerror = function() { reject(request.error); };
+            });
+        }
+
+        // ============================================================
+        //  MIGRATION FROM LOCALSTORAGE
+        // ============================================================
+        async function migrateFromLocalStorage() {
+            const hasFarmers = localStorage.getItem('farmers') !== null;
+            if (!hasFarmers) return false;
+            try {
+                const farmersData = JSON.parse(localStorage.getItem('farmers') || '[]');
+                for (const f of farmersData) {
+                    if (!f.type) f.type = 'registered';
+                    if (!f.status) f.status = 'active';
+                    if (!f.dob) f.dob = null;
+                    if (!f.telephone) f.telephone = '';
+                    try { await addData('farmers', f); } catch (e) { /* duplicate skip */ }
+                }
+                const recordTypes = ['pcRecords', 'cashIn', 'cashOut', 'stockIn', 'stockOut', 'loans', 'bonusHistory'];
+                for (const type of recordTypes) {
+                    const items = JSON.parse(localStorage.getItem(type) || '[]');
+                    for (const item of items) {
+                        const record = { ...item, recordType: type };
+                        if (!record.id) record.id = Date.now() + Math.random();
+                        try { await addData('records', record); } catch (e) { /* duplicate skip */ }
+                    }
+                }
+                const settingsData = JSON.parse(localStorage.getItem('settings') || '{}');
+                if (Object.keys(settingsData).length > 0) {
+                    await updateData('settings', { key: 'appSettings', value: settingsData });
+                }
+                const metaData = JSON.parse(localStorage.getItem('systemMeta') || '{}');
+                if (Object.keys(metaData).length > 0) {
+                    await updateData('settings', { key: 'systemMeta', value: metaData });
+                }
+                localStorage.removeItem('farmers');
+                localStorage.removeItem('pcRecords');
+                localStorage.removeItem('cashIn');
+                localStorage.removeItem('cashOut');
+                localStorage.removeItem('stockIn');
+                localStorage.removeItem('stockOut');
+                localStorage.removeItem('loans');
+                localStorage.removeItem('bonusHistory');
+                localStorage.removeItem('settings');
+                localStorage.removeItem('systemMeta');
+                console.log('✅ Migration from localStorage to IndexedDB complete!');
+                return true;
+            } catch (e) {
+                console.error('❌ Migration error:', e);
+                return false;
+            }
+        }
+
+        // ============================================================
+        //  DATA LOAD / SAVE
+        // ============================================================
+        let farmers = [];
+        let pcRecords = [];
+        let cashIn = [];
+        let cashOut = [];
+        let stockIn = [];
+        let stockOut = [];
+        let loans = [];
+        let bonusHistory = [];
+        let settings = { pricePerKg: 0.50, bonusRate: 5, volumeTier: 10000, volumeBonusExtra: 10 };
+        let systemMeta = { lastReset: null, dataStartDate: null };
+
+        async function loadAllData() {
+            try {
+                farmers = await getAllData('farmers') || [];
+                for (const f of farmers) {
+                    if (!f.telephone) f.telephone = '';
+                    if (!f.dob) f.dob = null;
+                }
+                const allRecords = await getAllData('records') || [];
+                pcRecords = allRecords.filter(r => r.recordType === 'pcRecords');
+                cashIn = allRecords.filter(r => r.recordType === 'cashIn');
+                cashOut = allRecords.filter(r => r.recordType === 'cashOut');
+                stockIn = allRecords.filter(r => r.recordType === 'stockIn');
+                stockOut = allRecords.filter(r => r.recordType === 'stockOut');
+                loans = allRecords.filter(r => r.recordType === 'loans');
+                bonusHistory = allRecords.filter(r => r.recordType === 'bonusHistory');
+                const settingsRecord = await getDataById('settings', 'appSettings');
+                if (settingsRecord) settings = settingsRecord.value || settings;
+                const metaRecord = await getDataById('settings', 'systemMeta');
+                if (metaRecord) systemMeta = metaRecord.value || systemMeta;
+                console.log(
+                    `📊 Loaded: ${farmers.length} farmers, ${pcRecords.length} Purchase Clerk records, ${stockOut.length} dispatches, ${loans.length} loans`
+                    );
+            } catch (e) {
+                console.error('❌ Error loading data:', e);
+                toast('❌ Error loading data. Check console.');
+            }
+        }
+
+        async function saveAllData() {
+            try {
+                for (const f of farmers) {
+                    await updateData('farmers', f);
+                }
+                const allRecords = [...pcRecords, ...cashIn, ...cashOut, ...stockIn, ...stockOut, ...loans, ...bonusHistory];
+                for (const r of allRecords) {
+                    await updateData('records', r);
+                }
+                await updateData('settings', { key: 'appSettings', value: settings });
+                await updateData('settings', { key: 'systemMeta', value: systemMeta });
+                updateStorageIndicators();
+                console.log('💾 Data saved to IndexedDB');
+            } catch (e) {
+                console.error('❌ Error saving data:', e);
+                toast('❌ Error saving data. Check console.');
+            }
+        }
+
+        // ============================================================
+        //  HELPERS
+        // ============================================================
+        const BAG_SIZE = 64;
+        const DEFAULT_STATION = 'Purchase Clerk';
+        const RETENTION_DAYS = 10000;
+
+        function getFarmerName(id) { const f = farmers.find(x => x.id === id); return f ? f.name : 'Unknown'; }
+        function getFarmerStation(id) { const f = farmers.find(x => x.id === id); return f ? f.station || DEFAULT_STATION :
+                DEFAULT_STATION; }
+        function getFarmerType(id) { const f = farmers.find(x => x.id === id); return f ? f.type || 'registered' : 'registered'; }
+        function getFarmerStatus(id) { const f = farmers.find(x => x.id === id); return f ? f.status || 'active' : 'active'; }
+        function getFarmerDob(id) { const f = farmers.find(x => x.id === id); return f ? f.dob || null : null; }
+        function getFarmerTelephone(id) { const f = farmers.find(x => x.id === id); return f ? f.telephone || '' : ''; }
+        function getPricePerKg() { return settings.pricePerKg || 0.50; }
+        function getBonusRate() { return settings.bonusRate || 5; }
+        function getVolumeTier() { return settings.volumeTier || 10000; }
+        function getVolumeBonusExtra() { return settings.volumeBonusExtra || 10; }
+        function calcBags(kg) { return kg / BAG_SIZE; }
+        function calcPayment(kg, rate) { return kg * rate; }
+        function calcBonus(totalPayment, rate, totalKg) {
+            let bonus = totalPayment * (rate / 100);
+            if (totalKg >= getVolumeTier()) bonus *= (1 + getVolumeBonusExtra() / 100);
+            return Math.round(bonus * 100) / 100;
+        }
+        function formatDate(d) { if (!d) return ''; const p = d.split('-'); return `${p[2]}/${p[1]}/${p[0]}`; }
+        function formatDisplayDate(d) { if (!d) return '—'; const p = d.split('-'); return `${p[2]}/${p[1]}/${p[0]}`; }
+        function nowDate() { return new Date().toISOString().split('T')[0]; }
+        function toast(msg) { document.getElementById('toastMsg').textContent = msg; const t = new bootstrap.Toast(document
+                .getElementById('liveToast')); t.show(); }
+        function generateFarmerId() {
+            const year = new Date().getFullYear();
+            const existing = farmers.filter(f => f.id.startsWith(`FARM-${year}`));
+            return `FARM-${year}-${String(existing.length + 1).padStart(3, '0')}`;
+        }
+        function generateWalkInCard() {
+            const num = Math.floor(10000 + Math.random() * 90000);
+            return `WALKIN-${num}`;
+        }
+
+        function getPcNames() {
+            const names = new Set();
+            const activeCashOut = cashOut.filter(c => getFarmerStatus(c.farmerId) === 'active');
+            const activeStockIn = stockIn.filter(s => getFarmerStatus(s.farmerId) === 'active');
+            const activePcRecords = pcRecords.filter(r => getFarmerStatus(r.farmerId) === 'active');
+            activeCashOut.forEach(c => { if (c.pcName) names.add(c.pcName); });
+            activeStockIn.forEach(s => { if (s.pcName) names.add(s.pcName); });
+            activePcRecords.forEach(r => {
+                const station = r.station || getFarmerStation(r.farmerId);
+                if (station) names.add(station);
+            });
+            if (names.size === 0) names.add('Purchase Clerk');
+            return Array.from(names);
+        }
+
+        function getDataAge() {
+            const dates = [...pcRecords.map(r => r.date), ...cashIn.map(r => r.date), ...cashOut.map(r => r.date), ...stockIn
+                .map(r => r.date), ...stockOut.map(r => r.date)
+            ].filter(d => d);
+            if (dates.length === 0) return 0;
+            if (systemMeta.dataStartDate) {
+                const start = new Date(systemMeta.dataStartDate);
+                return Math.ceil(Math.abs(new Date() - start) / (1000 * 60 * 60 * 24));
+            }
+            const oldest = new Date(Math.min(...dates.map(d => new Date(d).getTime())));
+            const age = Math.ceil(Math.abs(new Date() - oldest) / (1000 * 60 * 60 * 24));
+            if (dates.length > 0 && !systemMeta.dataStartDate) {
+                systemMeta.dataStartDate = oldest.toISOString();
+                saveAllData();
+            }
+            return age;
+        }
+
+        function updateStorageIndicators() {
+            const total = farmers.length + pcRecords.length + cashIn.length + cashOut.length + stockIn.length + stockOut
+                .length + loans.length + bonusHistory.length;
+            document.getElementById('storageCount').textContent = total;
+            document.getElementById('footerRecordCount').textContent = total + ' records';
+            document.getElementById('footerDispatchCount').textContent = 'Dispatches: ' + stockOut.length;
+            document.getElementById('statDispatchCount').textContent = stockOut.length;
+            document.getElementById('settingsDispatchCount').textContent = stockOut.length;
+            document.getElementById('dashboardTotalRecords').textContent = total;
+            document.getElementById('dashboardDispatchCount').textContent = stockOut.length;
+            const age = getDataAge();
+            document.getElementById('footerDataAge').textContent = `Data age: ${age} days`;
+            document.getElementById('dashboardDataAge').textContent = age + ' days';
+            const active = farmers.filter(f => f.status === 'active').length;
+            const archived = farmers.filter(f => f.status === 'archived').length;
+            document.getElementById('dashboardActiveFarmers').textContent = active;
+            document.getElementById('dashboardArchivedFarmers').textContent = archived;
+        }
+
+        // ============================================================
+        //  EXPORT FUNCTIONS
+        // ============================================================
+        function exportCSV(data, headers, filename) {
+            if (data.length === 0) { toast('❌ No data to export'); return; }
+            let csv = headers.join(',') + '\n';
+            data.forEach(row => {
+                csv += headers.map(h => {
+                    let val = row[h] !== undefined ? row[h] : '';
+                    if (typeof val === 'string' && val.includes(',')) val = '"' + val + '"';
+                    return val;
+                }).join(',') + '\n';
+            });
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = filename + '_' + new Date().toISOString().split('T')[0] + '.csv';
+            link.click();
+            toast('📥 ' + filename + ' exported');
+        }
+
+        document.getElementById('exportStockInBtn').addEventListener('click', function() {
+            const headers = ['date', 'pcName', 'bags', 'kg', 'amount'];
+            const data = stockIn.map(r => ({
+                date: r.date,
+                pcName: r.pcName || 'N/A',
+                bags: (r.bags || 0).toFixed(2),
+                kg: (r.kg || 0).toFixed(1),
+                amount: (r.amount || 0).toFixed(2)
+            }));
+            exportCSV(data, headers, 'Stock_In');
+        });
+
+        document.getElementById('exportStockOutBtn').addEventListener('click', function() {
+            const headers = ['date', 'pcName', 'bags', 'kg', 'type'];
+            const data = stockOut.map(r => ({
+                date: r.date,
+                pcName: r.pcName || 'N/A',
+                bags: (r.bags || 0).toFixed(2),
+                kg: (r.kg || 0).toFixed(1),
+                type: r.note || 'Dispatch'
+            }));
+            exportCSV(data, headers, 'Dispatch');
+        });
+
+        document.getElementById('exportLedgerBtn').addEventListener('click', function() {
+            const headers = ['date', 'pcName', 'amount'];
+            const grouped = {};
+            const activePcRecords = pcRecords.filter(r => getFarmerStatus(r.farmerId) === 'active');
+            activePcRecords.forEach(r => {
+                const key = r.date + '|' + (r.station || DEFAULT_STATION);
+                if (!grouped[key]) grouped[key] = { date: r.date, pcName: r.station || DEFAULT_STATION,
+                    amount: 0 };
+                grouped[key].amount += (r.payment || 0);
+            });
+            const data = Object.values(grouped).map(r => ({
+                date: r.date,
+                pcName: r.pcName,
+                amount: r.amount.toFixed(2)
+            }));
+            exportCSV(data, headers, 'Ledger');
+        });
+
+        document.getElementById('exportAllStockBtn').addEventListener('click', function() {
+            let count = 0;
+            if (stockIn.length > 0) { document.getElementById('exportStockInBtn').click();
+                count++; }
+            if (stockOut.length > 0) { document.getElementById('exportStockOutBtn').click();
+                count++; }
+            if (pcRecords.length > 0) { document.getElementById('exportLedgerBtn').click();
+                count++; }
+            if (count === 0) { toast('❌ No stock data to export'); }
+        });
+
+        document.getElementById('exportActiveLoansBtn').addEventListener('click', function() {
+            const headers = ['date', 'farmerName', 'farmerId', 'amount', 'purpose', 'status'];
+            const data = loans.filter(l => l.status === 'Active' && getFarmerStatus(l.farmerId) === 'active').map(r => ({
+                date: r.date,
+                farmerName: getFarmerName(r.farmerId),
+                farmerId: r.farmerId,
+                amount: (r.amount || 0).toFixed(2),
+                purpose: r.purpose || 'N/A',
+                status: r.status || 'Active'
+            }));
+            exportCSV(data, headers, 'Active_Loans');
+        });
+
+        document.getElementById('exportPaidLoansBtn').addEventListener('click', function() {
+            const headers = ['date', 'farmerName', 'farmerId', 'amount', 'purpose', 'status'];
+            const data = loans.filter(l => l.status === 'Paid' && getFarmerStatus(l.farmerId) === 'active').map(r => ({
+                date: r.date,
+                farmerName: getFarmerName(r.farmerId),
+                farmerId: r.farmerId,
+                amount: (r.amount || 0).toFixed(2),
+                purpose: r.purpose || 'N/A',
+                status: r.status || 'Paid'
+            }));
+            exportCSV(data, headers, 'Paid_Loans');
+        });
+
+        document.getElementById('exportAllLoansBtn').addEventListener('click', function() {
+            const headers = ['date', 'farmerName', 'farmerId', 'amount', 'purpose', 'status'];
+            const data = loans.filter(l => getFarmerStatus(l.farmerId) === 'active').map(r => ({
+                date: r.date,
+                farmerName: getFarmerName(r.farmerId),
+                farmerId: r.farmerId,
+                amount: (r.amount || 0).toFixed(2),
+                purpose: r.purpose || 'N/A',
+                status: r.status || 'Active'
+            }));
+            exportCSV(data, headers, 'All_Loans');
+        });
+
+        // ============================================================
+        //  SEARCH
+        // ============================================================
+        let searchQuery = '';
+        let showArchived = false;
+
+        function filterFarmers() {
+            const q = searchQuery.toLowerCase().trim();
+            const rows = document.querySelectorAll('#farmersBody tr');
+            let visible = 0;
+            rows.forEach(row => {
+                const match = !q || row.textContent.toLowerCase().includes(q);
+                row.style.display = match ? '' : 'none';
+                if (match) visible++;
+            });
+            const no = document.getElementById('noFarmersFound');
+            const displayFarmers = showArchived ? farmers : farmers.filter(f => f.status === 'active');
+            no.classList.toggle('d-none', visible > 0 || displayFarmers.length === 0);
+            if (displayFarmers.length === 0) {
+                no.innerHTML =
+                    `<i class="bi bi-people"></i><p>${showArchived ? 'No archived farmers.' : 'No active farmers.'}</p>`;
+                no.classList.remove('d-none');
+            } else if (visible === 0 && displayFarmers.length > 0) {
+                no.innerHTML =
+                    `<i class="bi bi-search"></i><p>No farmers match.</p><button class="btn btn-sm btn-outline-secondary" id="clearSearchFromEmptyBtn">Clear</button>`;
+                no.classList.remove('d-none');
+                document.getElementById('clearSearchFromEmptyBtn')?.addEventListener('click', clearSearch);
+            }
+            document.getElementById('visibleFarmerCount').textContent = visible;
+            document.getElementById('totalFarmerCount').textContent = displayFarmers.length;
+        }
+
+        function clearSearch() { document.getElementById('farmerSearchInput').value = '';
+            searchQuery = '';
+            filterFarmers(); }
+        document.getElementById('farmerSearchInput').addEventListener('input', function() { searchQuery = this.value;
+            filterFarmers(); });
+        document.getElementById('clearSearchBtn').addEventListener('click', clearSearch);
+
+        document.getElementById('toggleArchivedView').addEventListener('click', function() {
+            showArchived = !showArchived;
+            this.innerHTML = showArchived ?
+                '<i class="bi bi-people me-1"></i> Show Active' :
+                '<i class="bi bi-archive me-1"></i> Show Archived';
+            renderFarmers();
+            clearSearch();
+        });
+
+        document.querySelectorAll('button[data-bs-toggle="tab"]').forEach(btn => {
+            btn.addEventListener('shown.bs.tab', function(e) {
+                const target = this.getAttribute('data-bs-target');
+                if (target === '#farmers') { clearSearch();
+                    renderFarmers(); }
+                if (target === '#dashboard') renderDashboard();
+            });
+        });
+
+        // ============================================================
+        //  SEARCHABLE DROPDOWN FOR PC MODAL
+        // ============================================================
+        let selectedFarmerId = null;
+
+        function initSearchableDropdown() {
+            const searchInput = document.getElementById('pcFarmerSearch');
+            const dropdown = document.getElementById('pcFarmerDropdown');
+            const hiddenId = document.getElementById('pcFarmerId');
+
+            if (!searchInput || !dropdown || !hiddenId) return;
+
+            document.getElementById('pcModal').addEventListener('shown.bs.modal', function() {
+                const activeFarmers = farmers.filter(f => f.status === 'active');
+                if (activeFarmers.length === 0) {
+                    dropdown.innerHTML =
+                        `<div class="dropdown-item text-muted">No active farmers</div>`;
+                    dropdown.classList.add('show');
+                    return;
+                }
+                dropdown.innerHTML = activeFarmers.map(f =>
+                    `<div class="dropdown-item" data-id="${f.id}" data-name="${f.name}">${f.id} - ${f.name}</div>`
+                ).join('');
+                dropdown.querySelectorAll('.dropdown-item').forEach(el => {
+                    el.addEventListener('click', function() {
+                        const id = this.dataset.id;
+                        const name = this.dataset.name;
+                        hiddenId.value = id;
+                        searchInput.value = name;
+                        dropdown.classList.remove('show');
+                        selectedFarmerId = id;
+                        const station = getFarmerStation(id);
+                        document.getElementById('pcStation').value = station || DEFAULT_STATION;
+                        updatePcCalculations();
+                    });
+                });
+                if (hiddenId.value) {
+                    const f = farmers.find(x => x.id === hiddenId.value);
+                    if (f) {
+                        searchInput.value = f.name;
+                        selectedFarmerId = f.id;
+                        const station = getFarmerStation(f.id);
+                        document.getElementById('pcStation').value = station || DEFAULT_STATION;
+                    }
+                }
+            });
+
+            searchInput.addEventListener('input', function() {
+                const q = this.value.toLowerCase().trim();
+                const items = dropdown.querySelectorAll('.dropdown-item');
+                let visible = 0;
+                items.forEach(el => {
+                    const match = !q || el.textContent.toLowerCase().includes(q);
+                    el.style.display = match ? '' : 'none';
+                    if (match) visible++;
+                });
+                if (visible === 0) {
+                    dropdown.innerHTML =
+                        `<div class="dropdown-item text-muted">No matching farmers</div>`;
+                }
+                dropdown.classList.add('show');
+            });
+
+            searchInput.addEventListener('blur', function() {
+                setTimeout(() => {
+                    dropdown.classList.remove('show');
+                }, 200);
+            });
+
+            document.addEventListener('click', function(e) {
+                const container = document.querySelector('.searchable-dropdown');
+                if (container && !container.contains(e.target)) {
+                    dropdown.classList.remove('show');
+                }
+            });
+
+            searchInput.addEventListener('change', function() {
+                if (!this.value.trim()) {
+                    hiddenId.value = '';
+                    selectedFarmerId = null;
+                }
+            });
+        }
+
+        // ============================================================
+        //  RENDER FUNCTIONS
+        // ============================================================
+        function renderFarmers() {
+            const displayFarmers = showArchived ? farmers : farmers.filter(f => f.status === 'active');
+            const tbody = document.getElementById('farmersBody');
+            if (displayFarmers.length === 0) {
+                tbody.innerHTML =
+                    `<tr><td colspan="7" class="text-center py-4"><div class="empty-state"><i class="bi bi-people"></i><h5>${showArchived ? 'No Archived Farmers' : 'No Active Farmers'}</h5></div></td></tr>`;
+                return;
+            }
+            tbody.innerHTML = displayFarmers.map((f, index) => {
+                const recs = pcRecords.filter(r => r.farmerId === f.id && getFarmerStatus(r.farmerId) === 'active')
+                    .length;
+                const type = f.type || 'registered';
+                const typeBadge = type === 'registered' ?
+                    `<span class="farmer-type-badge-registered">✓ Registered</span>` :
+                    `<span class="farmer-type-badge-casual">🔄 Casual</span>`;
+                const telDisplay = f.telephone ? `<span class="tel-badge"><i class="bi bi-phone me-1"></i>${f.telephone}</span>` :
+                    `<span class="text-muted">—</span>`;
+                const actions = f.status === 'active' ?
+                    `
+                        <button class="btn btn-sm btn-outline-secondary editFarmerBtn" data-id="${f.id}" title="Edit"><i class="bi bi-pencil"></i></button>
+                        <button class="btn btn-sm btn-outline-danger archiveFarmerBtn" data-id="${f.id}" title="Archive"><i class="bi bi-archive"></i></button>
+                        <button class="btn btn-sm btn-outline-info viewFarmerBtn" data-id="${f.id}" title="View Details"><i class="bi bi-eye"></i></button>
+                    ` :
+                    `
+                        <button class="btn btn-sm btn-outline-success restoreFarmerBtn" data-id="${f.id}" title="Restore"><i class="bi bi-arrow-counterclockwise"></i></button>
+                        <button class="btn btn-sm btn-outline-info viewFarmerBtn" data-id="${f.id}" title="View Details"><i class="bi bi-eye"></i></button>
+                    `;
+                return `<tr>
+                    <td>${index + 1}</td>
+                    <td><strong>${f.name}</strong> <span class="record-count-badge">${recs}</span></td>
+                    <td><span class="ghana-card-badge"><i class="bi bi-credit-card me-1"></i>${f.ghanaCard || 'N/A'}</span></td>
+                    <td>${typeBadge}</td>
+                    <td>${telDisplay}</td>
+                    <td><span class="station-tag">${f.station || DEFAULT_STATION}</span></td>
+                    <td class="action-buttons">${actions}</td>
+                </tr>`;
+            }).join('');
+
+            document.querySelectorAll('.editFarmerBtn').forEach(b => b.addEventListener('click', () => openFarmerModal(b
+                .dataset.id)));
+            document.querySelectorAll('.archiveFarmerBtn').forEach(b => b.addEventListener('click', async () => {
+                const id = b.dataset.id;
+                const f = farmers.find(x => x.id === id);
+                if (!f) return;
+                if (confirm(`Archive farmer "${f.name}"? Their PC records will be kept but hidden.`)) {
+                    f.status = 'archived';
+                    await updateData('farmers', f);
+                    await saveAllData();
+                    renderAll();
+                    toast(`🗑️ Farmer ${f.name} archived.`);
+                }
+            }));
+            document.querySelectorAll('.restoreFarmerBtn').forEach(b => b.addEventListener('click', async () => {
+                const id = b.dataset.id;
+                const f = farmers.find(x => x.id === id);
+                if (!f) return;
+                f.status = 'active';
+                await updateData('farmers', f);
+                await saveAllData();
+                renderAll();
+                toast(`✅ Farmer ${f.name} restored.`);
+            }));
+            document.querySelectorAll('.viewFarmerBtn').forEach(b => b.addEventListener('click', () => viewFarmerDetails(b
+                .dataset.id)));
+
+            filterFarmers();
+            populateDropdowns();
+        }
+
+        function viewFarmerDetails(id) {
+            const f = farmers.find(x => x.id === id);
+            if (!f) return;
+            const recs = pcRecords.filter(r => r.farmerId === id && getFarmerStatus(r.farmerId) === 'active');
+            const totalKg = recs.reduce((s, r) => s + (r.kg || 0), 0);
+            const totalPay = recs.reduce((s, r) => s + (r.payment || 0), 0);
+            const totalBags = recs.reduce((s, r) => s + (r.bags || 0), 0);
+            const farmerLoans = loans.filter(l => l.farmerId === id && getFarmerStatus(l.farmerId) === 'active');
+            const totalLoan = farmerLoans.reduce((s, l) => s + (l.amount || 0), 0);
+            const activeLoans = farmerLoans.filter(l => l.status === 'Active').length;
+            const type = f.type || 'registered';
+            const status = f.status || 'active';
+            const dob = f.dob ? formatDisplayDate(f.dob) : '—';
+            const tel = f.telephone || '—';
+
+            let html = `<div class="row g-2">
+                <div class="col-6"><strong>ID:</strong> ${f.id}</div>
+                <div class="col-6"><strong>Name:</strong> ${f.name}</div>
+                <div class="col-6"><strong>Ghana Card:</strong> ${f.ghanaCard || 'N/A'}</div>
+                <div class="col-6"><strong>Telephone:</strong> ${tel}</div>
+                <div class="col-6"><strong>Station:</strong> ${f.station || DEFAULT_STATION}</div>
+                <div class="col-6"><strong>DOB:</strong> ${dob}</div>
+                <div class="col-6"><strong>Type:</strong> ${type === 'registered' ? 'Registered ✓' : 'Casual'}</div>
+                <div class="col-6"><strong>Status:</strong> ${status === 'active' ? 'Active ✓' : 'Archived'}</div>
+            </div><hr>
+            <div class="row g-2">
+                <div class="col-4"><strong>Total kg:</strong> ${totalKg.toFixed(1)}</div>
+                <div class="col-4"><strong>Bags:</strong> ${totalBags.toFixed(2)}</div>
+                <div class="col-4"><strong>Payment:</strong> ${totalPay.toFixed(2)} GHS</div>
+                <div class="col-4"><strong>Records:</strong> ${recs.length}</div>
+                ${type === 'registered' && status === 'active' ? `
+                    <div class="col-4"><strong>Est. Bonus:</strong> ${calcBonus(totalPay, getBonusRate(), totalKg).toFixed(2)} GHS</div>
+                    <div class="col-4"><strong>Loans:</strong> ${farmerLoans.length} (${activeLoans} active)</div>
+                ` : ''}
+            </div><hr>
+            <div><strong>Recent Records (last 100):</strong></div>
+            <ul class="small">`;
+            recs.slice(-100).reverse().forEach(r => {
+                html += `<li>${formatDate(r.date)}: ${r.kg}kg → ${r.payment.toFixed(2)} GHS</li>`;
+            });
+            if (!recs.length) html += `<li class="text-muted">No records yet.</li>`;
+            html += `</ul>`;
+
+            document.getElementById('farmerDetailBody').innerHTML = html;
+            const modal = new bootstrap.Modal(document.getElementById('farmerDetailModal'));
+            modal.show();
+        }
+
+        function renderPcRecords() {
+            const activeRecords = pcRecords.filter(r => getFarmerStatus(r.farmerId) === 'active');
+            const tbody = document.getElementById('pcBody');
+            if (activeRecords.length === 0) {
+                tbody.innerHTML =
+                    `<tr><td colspan="8" class="text-center py-4"><div class="empty-state"><i class="bi bi-shop"></i><h5>No Cocoa P.C Records</h5><button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#pcModal"><i class="bi bi-plus-circle"></i> Add</button></div></td></tr>`;
+                return;
+            }
+            const sorted = [...activeRecords].sort((a, b) => a.date < b.date ? 1 : -1);
+            tbody.innerHTML = sorted.map((r, i) => {
+                const fType = getFarmerType(r.farmerId);
+                const typeHint = fType === 'casual farmer' ? ' 🟡 casual farmer' : '';
+                return `<tr>
+                    <td><strong>${getFarmerName(r.farmerId)}</strong>${typeHint}<br><small class="text-muted">${r.farmerId}</small></td>
+                    <td>${formatDate(r.date)}</td>
+                    <td>${r.kg || 0}</td>
+                    <td><span class="bag-badge">${(r.bags || 0).toFixed(2)}</span></td>
+                    <td>${(r.rate || 0).toFixed(2)}</td>
+                    <td><strong class="text-success">${(r.payment || 0).toFixed(2)}</strong></td>
+                    <td><span class="station-tag">${r.station || getFarmerStation(r.farmerId) || DEFAULT_STATION}</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-secondary editPcBtn" data-id="${r.id}"><i class="bi bi-pencil"></i></button>
+                        <button class="btn btn-sm btn-outline-danger deletePcBtn" data-id="${r.id}"><i class="bi bi-trash"></i></button>
+                    </td>
+                </tr>`;
+            }).join('');
+            document.querySelectorAll('.editPcBtn').forEach(b => b.addEventListener('click', () => openPcModal(parseInt(b
+                .dataset.id))));
+            document.querySelectorAll('.deletePcBtn').forEach(b => b.addEventListener('click', async () => {
+                const id = parseInt(b.dataset.id);
+                if (confirm('Delete this record? This will also remove its Cash Out and Stock In entries.')) {
+                    try {
+                        const cashOutIds = cashOut.filter(r => r.pcId === id).map(r => r.id);
+                        const stockInIds = stockIn.filter(r => r.pcId === id).map(r => r.id);
+                        for (const cid of cashOutIds) await deleteData('records', cid);
+                        for (const sid of stockInIds) await deleteData('records', sid);
+                        await deleteData('records', id);
+                        pcRecords = pcRecords.filter(r => r.id !== id);
+                        cashOut = cashOut.filter(r => r.pcId !== id);
+                        stockIn = stockIn.filter(r => r.pcId !== id);
+                        await saveAllData();
+                        renderAll();
+                        toast('🗑️ Record and all linked entries deleted');
+                    } catch (e) {
+                        toast('❌ Error deleting record: ' + e.message);
+                    }
+                }
+            }));
+        }
+
+        function renderCash() {
+            const inBody = document.getElementById('cashInBody');
+            if (cashIn.length === 0) {
+                inBody.innerHTML = `<tr><td colspan="5" class="text-center text-muted">No cash in records</td></tr>`;
+            } else {
+                inBody.innerHTML = cashIn.map(r => `<tr>
+                    <td>${formatDate(r.date)}</td>
+                    <td><span class="pc-badge">${r.source || 'N/A'}</span></td>
+                    <td>${r.purpose || 'N/A'}</td>
+                    <td><strong class="text-success">${(r.amount || 0).toFixed(2)}</strong></td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-secondary editCashInBtn" data-id="${r.id}"><i class="bi bi-pencil"></i></button>
+                        <button class="btn btn-sm btn-outline-danger deleteCashInBtn" data-id="${r.id}"><i class="bi bi-trash"></i></button>
+                    </td>
+                </tr>`).join('');
+                document.querySelectorAll('.editCashInBtn').forEach(b => b.addEventListener('click', () =>
+                    openCashInModal(parseInt(b.dataset.id))));
+                document.querySelectorAll('.deleteCashInBtn').forEach(b => b.addEventListener('click', async () => {
+                    if (confirm('Delete this cash in record?')) {
+                        const id = parseInt(b.dataset.id);
+                        cashIn = cashIn.filter(r => r.id !== id);
+                        await deleteData('records', id);
+                        await saveAllData();
+                        renderAll();
+                        toast('🗑️ Cash in deleted');
+                    }
+                }));
+            }
+
+            const outBody = document.getElementById('cashOutBody');
+            const activeCashOut = cashOut.filter(r => {
+                let fid = r.farmerId;
+                if (!fid) {
+                    const pc = pcRecords.find(p => p.id === r.pcId);
+                    if (pc) fid = pc.farmerId;
+                }
+                return getFarmerStatus(fid) === 'active';
+            });
+            if (activeCashOut.length === 0) {
+                outBody.innerHTML =
+                    `<tr><td colspan="4" class="text-center text-muted">No cash out from active farmers</td></tr>`;
+            } else {
+                const sorted = [...activeCashOut].sort((a, b) => a.date < b.date ? 1 : -1);
+                outBody.innerHTML = sorted.map(r => `<tr>
+                    <td>${formatDate(r.date)}</td>
+                    <td><span class="pc-badge">${r.pcName || 'N/A'}</span></td>
+                    <td>${r.farmerName || 'N/A'}</td>
+                    <td><strong class="text-danger">${(r.amount || 0).toFixed(2)}</strong></td>
+                </tr>`).join('');
+            }
+
+            const totalIn = cashIn.reduce((s, r) => s + (r.amount || 0), 0);
+            const totalOut = cashOut.reduce((s, r) => s + (r.amount || 0), 0);
+            document.getElementById('totalCashIn').textContent = totalIn.toFixed(2) + ' GHS';
+            document.getElementById('totalCashOut').textContent = totalOut.toFixed(2) + ' GHS';
+            document.getElementById('cashBalanceDisplay').textContent = (totalIn - totalOut).toFixed(2) + ' GHS';
+            document.getElementById('statCashBalance').textContent = (totalIn - totalOut).toFixed(2);
+            document.getElementById('statCashIn').textContent = totalIn.toFixed(2);
+            document.getElementById('statCashOut').textContent = totalOut.toFixed(2);
+        }
+
+        function renderStock() {
+            const inBody = document.getElementById('stockInBody');
+            const activeStockIn = stockIn.filter(r => {
+                let fid = r.farmerId;
+                if (!fid) {
+                    const pc = pcRecords.find(p => p.id === r.pcId);
+                    if (pc) fid = pc.farmerId;
+                }
+                return getFarmerStatus(fid) === 'active';
+            });
+            if (activeStockIn.length === 0) {
+                inBody.innerHTML =
+                    `<tr><td colspan="6" class="text-center text-muted">No stock in from active farmers</td></tr>`;
+            } else {
+                const sorted = [...activeStockIn].sort((a, b) => a.date < b.date ? 1 : -1);
+                inBody.innerHTML = sorted.map(r => `<tr>
+                    <td>${formatDate(r.date)}</td>
+                    <td><span class="pc-badge">${r.pcName || 'N/A'}</span></td>
+                    <td>${(r.bags || 0).toFixed(2)}</td>
+                    <td>${(r.kg || 0).toFixed(1)}</td>
+                    <td>${(r.amount || 0).toFixed(2)}</td>
+                    </td>
+                </tr>`).join('');
+                document.querySelectorAll('.deleteStockInBtn').forEach(b => b.addEventListener('click', async function() {
+                    const pcId = parseInt(b.dataset.id);
+                    if (confirm(
+                            'Delete the linked P.C record? This will also remove the Stock In and Cash Out entries.'
+                            )) {
+                        const pcRecord = pcRecords.find(r => r.id === pcId);
+                        if (pcRecord) {
+                            try {
+                                const cashOutIds = cashOut.filter(r => r.pcId === pcId).map(r => r.id);
+                                const stockInIds = stockIn.filter(r => r.pcId === pcId).map(r => r.id);
+                                for (const cid of cashOutIds) await deleteData('records', cid);
+                                for (const sid of stockInIds) await deleteData('records', sid);
+                                await deleteData('records', pcId);
+                                pcRecords = pcRecords.filter(r => r.id !== pcId);
+                                cashOut = cashOut.filter(r => r.pcId !== pcId);
+                                stockIn = stockIn.filter(r => r.pcId !== pcId);
+                                await saveAllData();
+                                renderAll();
+                                toast('🗑️ P.C record and linked entries deleted');
+                            } catch (e) {
+                                toast('❌ Error deleting record: ' + e.message);
+                            }
+                        }
+                    }
+                }));
+            }
+
+            const outBody = document.getElementById('stockOutBody');
+            if (stockOut.length === 0) {
+                outBody.innerHTML =
+                    `<tr><td colspan="6" class="text-center text-muted">No dispatches</td></tr>`;
+            } else {
+                outBody.innerHTML = stockOut.map(r => `<tr>
+                    <td>${formatDate(r.date)}</td>
+                    <td><span class="pc-badge">${r.pcName || 'N/A'}</span></td>
+                    <td>${(r.bags || 0).toFixed(2)}</td>
+                    <td>${(r.kg || 0).toFixed(1)}</td>
+                    <td><span class="badge bg-success">${r.note || 'Dispatch'}</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-secondary editStockOutBtn" data-id="${r.id}"><i class="bi bi-pencil"></i></button>
+                        <button class="btn btn-sm btn-outline-danger deleteStockOutBtn" data-id="${r.id}"><i class="bi bi-trash"></i></button>
+                    </td>
+                </tr>`).join('');
+
+                document.querySelectorAll('.editStockOutBtn').forEach(b => b.addEventListener('click', () =>
+                    openStockOutModal(parseInt(b.dataset.id))));
+                document.querySelectorAll('.deleteStockOutBtn').forEach(b => b.addEventListener('click', async () => {
+                    const id = parseInt(b.dataset.id);
+                    if (confirm('Delete this dispatch?')) {
+                        stockOut = stockOut.filter(r => r.id !== id);
+                        await deleteData('records', id);
+                        await saveAllData();
+                        renderAll();
+                        toast('🗑️ Dispatch deleted');
+                    }
+                }));
+            }
+
+            const ledBody = document.getElementById('pcLedgerBody');
+            const grouped = {};
+            pcRecords.forEach(r => {
+                if (getFarmerStatus(r.farmerId) !== 'active') return;
+                const key = r.date + '|' + (r.station || DEFAULT_STATION);
+                if (!grouped[key]) grouped[key] = { date: r.date, pcName: r.station || DEFAULT_STATION,
+                    amount: 0 };
+                grouped[key].amount += (r.payment || 0);
+            });
+            const sortedLedger = Object.values(grouped).sort((a, b) => a.date < b.date ? 1 : -1);
+            if (sortedLedger.length === 0) {
+                ledBody.innerHTML = `<tr><td colspan="4" class="text-center text-muted">No payments</td></tr>`;
+            } else {
+                ledBody.innerHTML = sortedLedger.map(r => `<tr>
+                    <td>${formatDate(r.date)}</td>
+                    <td><span class="pc-badge">${r.pcName}</span></td>
+                    <td><strong class="text-success">${(r.amount || 0).toFixed(2)}</strong></td>
+                    <td>Cocoa Purchase</td>
+                </tr>`).join('');
+            }
+
+            const totalStockIn = stockIn.reduce((s, r) => s + (r.kg || 0), 0);
+            const totalStockOut = stockOut.reduce((s, r) => s + (r.kg || 0), 0);
+            const totalBags = stockIn.reduce((s, r) => s + (r.bags || 0), 0);
+            const dispatchBags = stockOut.reduce((s, r) => s + (r.bags || 0), 0);
+            document.getElementById('stockTotalIn').textContent = totalStockIn.toFixed(1) + ' kg';
+            document.getElementById('stockTotalOut').textContent = totalStockOut.toFixed(1) + ' kg';
+            document.getElementById('stockBalanceDisplay').textContent = (totalStockIn - totalStockOut).toFixed(1) + ' kg';
+            document.getElementById('stockTotalBags').textContent = totalBags.toFixed(2);
+            document.getElementById('dispatchCountDisplay').textContent = stockOut.length;
+            document.getElementById('dispatchKgDisplay').textContent = totalStockOut.toFixed(1) + ' kg';
+            document.getElementById('dispatchBagsDisplay').textContent = dispatchBags.toFixed(2);
+            document.getElementById('statStockBalance').textContent = (totalStockIn - totalStockOut).toFixed(1);
+            document.getElementById('statStockIn').textContent = totalStockIn.toFixed(1) + ' kg';
+            document.getElementById('statStockOut').textContent = totalStockOut.toFixed(1) + ' kg';
+            const pcNames = getPcNames();
+            ['stockOutPc'].forEach(id => {
+                const sel = document.getElementById(id);
+                if (sel) {
+                    const current = sel.value;
+                    sel.innerHTML = pcNames.map(n => `<option value="${n}">${n}</option>`).join('');
+                    if (pcNames.includes(current)) sel.value = current;
+                }
+            });
+        }
+
+        function renderLoans() {
+            const activeLoans = loans.filter(l => getFarmerStatus(l.farmerId) === 'active');
+            const tbody = document.getElementById('loanBody');
+            if (activeLoans.length === 0) {
+                tbody.innerHTML =
+                    `<tr><td colspan="6" class="text-center py-4"><div class="empty-state"><i class="bi bi-credit-card"></i><h5>No Loan Records</h5><button class="btn btn-loan btn-sm" data-bs-toggle="modal" data-bs-target="#loanModal"><i class="bi bi-plus-circle"></i> Record Loan</button></div></td></tr>`;
+            } else {
+                const sorted = [...activeLoans].sort((a, b) => a.date < b.date ? 1 : -1);
+                tbody.innerHTML = sorted.map(r => {
+                    const statusClass = r.status === 'Paid' ? 'loan-paid-badge' : 'loan-badge';
+                    const statusText = r.status === 'Paid' ? '✅ Paid' : '⏳ Active';
+                    return `<tr>
+                        <td>${formatDate(r.date)}</td>
+                        <td><strong>${getFarmerName(r.farmerId)}</strong><br><small class="text-muted">${r.farmerId}</small></td>
+                        <td><strong class="text-primary">${(r.amount || 0).toFixed(2)} GHS</strong></td>
+                        <td><span class="pc-badge">${r.purpose || 'N/A'}</span></td>
+                        <td><span class="${statusClass}">${statusText}</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-secondary editLoanBtn" data-id="${r.id}"><i class="bi bi-pencil"></i></button>
+                            <button class="btn btn-sm btn-outline-danger deleteLoanBtn" data-id="${r.id}"><i class="bi bi-trash"></i></button>
+                            ${r.status === 'Active' ? `<button class="btn btn-sm btn-success repayLoanBtn" data-id="${r.id}"><i class="bi bi-check"></i></button>` : ''}
+                        </td>
+                    </tr>`;
+                }).join('');
+                document.querySelectorAll('.editLoanBtn').forEach(b => b.addEventListener('click', () =>
+                    openLoanModal(parseInt(b.dataset.id))));
+                document.querySelectorAll('.deleteLoanBtn').forEach(b => b.addEventListener('click', async () => {
+                    if (confirm('Delete this loan record?')) {
+                        const id = parseInt(b.dataset.id);
+                        loans = loans.filter(l => l.id !== id);
+                        await deleteData('records', id);
+                        await saveAllData();
+                        renderAll();
+                        toast('🗑️ Loan deleted');
+                    }
+                }));
+                document.querySelectorAll('.repayLoanBtn').forEach(b => b.addEventListener('click', async () => {
+                    const id = parseInt(b.dataset.id);
+                    const loan = loans.find(l => l.id === id);
+                    if (loan) {
+                        if (confirm(
+                                `Mark loan of ${loan.amount.toFixed(2)} GHS for ${getFarmerName(loan.farmerId)} as Paid?`
+                                )) {
+                            loan.status = 'Paid';
+                            await updateData('records', loan);
+                            await saveAllData();
+                            renderAll();
+                            toast('✅ Loan marked as paid');
+                        }
+                    }
+                }));
+            }
+            const totalLoans = loans.filter(l => getFarmerStatus(l.farmerId) === 'active').reduce((s, l) => s + (l
+                .amount || 0), 0);
+            const totalRepaid = loans.filter(l => l.status === 'Paid' && getFarmerStatus(l.farmerId) === 'active').reduce((
+                s, l) => s + (l.amount || 0), 0);
+            const totalOutstanding = totalLoans - totalRepaid;
+            document.getElementById('totalLoans').textContent = totalLoans.toFixed(2) + ' GHS';
+            document.getElementById('totalRepaid').textContent = totalRepaid.toFixed(2) + ' GHS';
+            document.getElementById('totalOutstanding').textContent = totalOutstanding.toFixed(2) + ' GHS';
+            document.getElementById('statActiveLoans').textContent = loans.filter(l => l.status === 'Active' &&
+                getFarmerStatus(l.farmerId) === 'active').length;
+        }
+
+        // UPDATED: Bonus with Paid status
+        function calculateBonus(year) {
+            const yearStr = String(year);
+            const filtered = pcRecords.filter(r => r.date && r.date.startsWith(yearStr) && getFarmerStatus(r.farmerId) ===
+                'active');
+            const result = [];
+            const activeFarmers = farmers.filter(f => f.status === 'active');
+            activeFarmers.forEach(f => {
+                const fType = f.type || 'registered';
+                if (fType !== 'registered') {
+                    result.push({ farmerId: f.id, farmerName: f.name, farmerType: fType, totalKg: 0, totalBags: 0,
+                        totalPayment: 0, bonus: 0, paid: false });
+                    return;
+                }
+                const recs = filtered.filter(r => r.farmerId === f.id);
+                if (recs.length === 0) {
+                    result.push({ farmerId: f.id, farmerName: f.name, farmerType: fType, totalKg: 0, totalBags: 0,
+                        totalPayment: 0, bonus: 0, paid: false });
+                    return;
+                }
+                const totalKg = recs.reduce((s, r) => s + (r.kg || 0), 0);
+                const totalBags = recs.reduce((s, r) => s + (r.bags || 0), 0);
+                const totalPayment = recs.reduce((s, r) => s + (r.payment || 0), 0);
+                const bonus = calcBonus(totalPayment, getBonusRate(), totalKg);
+                const paid = bonusHistory.some(b => b.farmerId === f.id && String(b.year) === yearStr);
+                result.push({ farmerId: f.id, farmerName: f.name, farmerType: fType, totalKg, totalBags, totalPayment,
+                    bonus, paid });
+            });
+            return result;
+        }
+
+        function renderBonuses() {
+            const year = document.getElementById('bonusYear').value || new Date().getFullYear();
+            const data = calculateBonus(year);
+            const tbody = document.getElementById('bonusBody');
+            if (data.length === 0 || data.every(d => d.totalKg === 0)) {
+                tbody.innerHTML =
+                    `<tr><td colspan="8" class="text-center py-4"><div class="empty-state"><i class="bi bi-cash-stack"></i><h5>No bonus data</h5></div></td></tr>`;
+            } else {
+                const sorted = [...data].sort((a, b) => b.totalKg - a.totalKg);
+                tbody.innerHTML = sorted.map((d, i) => {
+                    const status = d.paid ? 'Paid' : (d.bonus > 0 ? 'Pending' : 'N/A');
+                    const statusClass = d.paid ? 'bg-success' : (d.bonus > 0 ? 'bg-warning' : 'bg-secondary');
+                    const isTop = i === 0 && d.totalKg > 0;
+                    const typeBadge = d.farmerType === 'registered' ?
+                        `<span class="farmer-type-badge-registered" style="font-size:0.6rem;">Registered</span>` :
+                        `<span class="farmer-type-badge-casual" style="font-size:0.6rem;">Casual</span>`;
+                    return `<tr class="${isTop ? 'top-farmer' : ''}">
+                        <td><span class="farmer-id-badge">${d.farmerId}</span></td>
+                        <td><strong>${d.farmerName}${isTop ? ' 🏆' : ''}</strong> ${typeBadge}</td>
+                        <td>${d.totalKg.toFixed(1)}</td>
+                        <td>${d.totalBags.toFixed(2)}</td>
+                        <td><strong class="text-success">${d.totalPayment.toFixed(2)}</strong></td>
+                        <td><span class="bonus-badge">${getBonusRate()}%</span></td>
+                        <td><strong class="text-primary">${d.bonus.toFixed(2)} GHS</strong></td>
+                        <td><span class="badge ${statusClass}">${status}</span></td>
+                    </tr>`;
+                }).join('');
+            }
+            const histBody = document.getElementById('bonusHistoryBody');
+            if (bonusHistory.length === 0) {
+                histBody.innerHTML = `<tr><td colspan="5" class="text-center text-muted">No bonus payments</td></tr>`;
+            } else {
+                histBody.innerHTML = bonusHistory.map(r => `<tr>
+                    <td>${formatDate(r.date)}</td>
+                    <td>${r.farmerName || 'N/A'}</td>
+                    <td><strong class="text-success">${(r.amount || 0).toFixed(2)} GHS</strong></td>
+                    <td>${r.year || 'N/A'}</td>
+                    <td><span class="badge bg-success">Paid</span></td>
+                </tr>`).join('');
+            }
+            const totalBonus = data.reduce((s, d) => s + d.bonus, 0);
+            document.getElementById('statTotalBonus').textContent = totalBonus.toFixed(2) + ' GHS';
+        }
+
+        function renderDashboard() {
+            const activeFarmers = farmers.filter(f => f.status === 'active');
+            document.getElementById('statFarmers').textContent = activeFarmers.length;
+            document.getElementById('statPcRecords').textContent = pcRecords.filter(r => getFarmerStatus(r.farmerId) ===
+                'active').length;
+            const totalIn = cashIn.reduce((s, r) => s + (r.amount || 0), 0);
+            const totalOut = cashOut.reduce((s, r) => s + (r.amount || 0), 0);
+            document.getElementById('statCashBalance').textContent = (totalIn - totalOut).toFixed(2);
+            document.getElementById('statCashIn').textContent = totalIn.toFixed(2);
+            document.getElementById('statCashOut').textContent = totalOut.toFixed(2);
+            const totalStockIn = stockIn.reduce((s, r) => s + (r.kg || 0), 0);
+            const totalStockOut = stockOut.reduce((s, r) => s + (r.kg || 0), 0);
+            document.getElementById('statStockBalance').textContent = (totalStockIn - totalStockOut).toFixed(1);
+            document.getElementById('statStockIn').textContent = totalStockIn.toFixed(1) + ' kg';
+            document.getElementById('statStockOut').textContent = totalStockOut.toFixed(1) + ' kg';
+            const year = document.getElementById('bonusYear').value || new Date().getFullYear();
+            const bonusData = calculateBonus(year);
+            const top = [...bonusData].sort((a, b) => b.totalKg - a.totalKg)[0];
+            document.getElementById('topFarmerYear').textContent = year;
+            const display = document.getElementById('topFarmerDisplay');
+            if (top && top.totalKg > 0) {
+                display.innerHTML = `<div class="d-flex align-items-center gap-3 flex-wrap">
+                    <div class="bonus-trophy" style="font-size:2.5rem;">🏆</div>
+                    <div><h5 class="mb-0" style="color:var(--text-primary);">${top.farmerName}</h5>
+                    <div><span class="badge bg-success">${top.totalKg.toFixed(1)} kg</span><span class="badge bg-warning text-dark">${top.totalBags.toFixed(2)} bags</span></div></div>
+                    <div class="ms-auto"><span class="h4 text-success">${top.bonus.toFixed(2)} GHS</span></div>
+                </div>`;
+            } else {
+                display.innerHTML = `<div class="text-muted">No records yet.</div>`;
+            }
+            document.getElementById('headerFarmerCount').textContent = activeFarmers.length;
+            document.getElementById('settingsActiveFarmerCount').textContent = activeFarmers.length;
+            document.getElementById('settingsArchivedFarmerCount').textContent = farmers.filter(f => f.status === 'archived')
+                .length;
+            document.getElementById('settingsRecordCount').textContent = pcRecords.length + cashIn.length + cashOut.length +
+                stockIn.length + stockOut.length + loans.length;
+            document.getElementById('settingsTotalKg').textContent = pcRecords.reduce((s, r) => s + (r.kg || 0), 0).toFixed(
+                1) + ' kg';
+            const age = getDataAge();
+            document.getElementById('footerDataAge').textContent = `Data age: ${age} days`;
+            checkRetention();
+        }
+
+        function renderAll() {
+            renderFarmers();
+            renderPcRecords();
+            renderCash();
+            renderStock();
+            renderLoans();
+            renderBonuses();
+            renderDashboard();
+            updateStorageIndicators();
+        }
+
+        // ============================================================
+        //  BONUS
+        // ============================================================
+        document.getElementById('calculateBonusBtn').addEventListener('click', () => {
+            const year = parseInt(document.getElementById('bonusYear').value) || new Date().getFullYear();
+            renderBonuses();
+            toast(`💰 Bonuses calculated for ${year}`);
+        });
+
+        document.getElementById('exportBonusBtn').addEventListener('click', () => {
+            const year = parseInt(document.getElementById('bonusYear').value) || new Date().getFullYear();
+            const data = calculateBonus(year);
+            let csv = 'Farmer ID,Farmer Name,Type,Total Kg,Total Bags,Total Payment (GHS),Bonus (GHS),Paid\n';
+            data.forEach(d => {
+                csv +=
+                    `${d.farmerId},${d.farmerName},${d.farmerType},${d.totalKg.toFixed(1)},${d.totalBags.toFixed(2)},${d.totalPayment.toFixed(2)},${d.bonus.toFixed(2)},${d.paid ? 'Yes' : 'No'}\n`;
+            });
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `bonus_${year}.csv`;
+            link.click();
+            toast('📥 CSV downloaded');
+        });
+
+        document.getElementById('payBonusBtn').addEventListener('click', async () => {
+            const year = parseInt(document.getElementById('bonusYear').value) || new Date().getFullYear();
+            const data = calculateBonus(year);
+            const pending = data.filter(d => d.bonus > 0 && d.farmerType === 'registered' && !d.paid);
+            if (pending.length === 0) { toast('❌ No unpaid bonuses to pay'); return; }
+            const total = pending.reduce((s, d) => s + d.bonus, 0);
+            if (!confirm(`Pay ${pending.length} registered farmers ${total.toFixed(2)} GHS for ${year}?`)) return;
+            for (const d of pending) {
+                if (!bonusHistory.find(b => b.farmerId === d.farmerId && b.year === year)) {
+                    const newBonus = { id: Date.now() + Math.random(), date: nowDate(), farmerId: d.farmerId,
+                        farmerName: d.farmerName, amount: d.bonus, year: year, recordType: 'bonusHistory' };
+                    bonusHistory.push(newBonus);
+                    await updateData('records', newBonus);
+                }
+            }
+            toast(`✅ Bonuses paid: ${pending.length} farmers, ${total.toFixed(2)} GHS`);
+            await saveAllData();
+            renderAll();
+        });
+
+        // ============================================================
+        //  DISPATCH REPORT
+        // ============================================================
+        document.getElementById('generateDispatchReport').addEventListener('click', function() {
+            const card = document.getElementById('dispatchReportCard');
+            const body = document.getElementById('dispatchReportBody');
+            if (stockOut.length === 0) {
+                toast('❌ No dispatch records to report');
+                return;
+            }
+            card.style.display = 'block';
+            let html = `<div class="report-summary mb-3">
+                <h6>Dispatch Summary</h6>
+                <div class="row">
+                    <div class="col-4"><strong>Total Dispatches:</strong> ${stockOut.length}</div>
+                    <div class="col-4"><strong>Total kg:</strong> ${stockOut.reduce((s, r) => s + (r.kg || 0), 0).toFixed(1)} kg</div>
+                    <div class="col-4"><strong>Total Bags:</strong> ${stockOut.reduce((s, r) => s + (r.bags || 0), 0).toFixed(2)}</div>
+                </div>
+            </div>`;
+            html +=
+                `<table class="table table-sm"><thead><tr><th>Date</th><th>PC</th><th>Bags</th><th>kg</th><th>Note</th></tr></thead><tbody>`;
+            stockOut.forEach(r => {
+                html +=
+                    `<tr><td>${formatDate(r.date)}</td><td>${r.pcName}</td><td>${(r.bags||0).toFixed(2)}</td><td>${(r.kg||0).toFixed(1)}</td><td>${r.note || '-'}</td></tr>`;
+            });
+            html += `</tbody></table>`;
+            body.innerHTML = html;
+        });
+
+        document.getElementById('closeDispatchReport').addEventListener('click', function() {
+            document.getElementById('dispatchReportCard').style.display = 'none';
+        });
+
+        // ============================================================
+        //  RETENTION CHECK
+        // ============================================================
+        function checkRetention() {
+            const age = getDataAge();
+            const banner = document.getElementById('resetBannerContainer');
+            const hasData = pcRecords.length > 0 || cashIn.length > 0 || cashOut.length > 0 || stockIn.length > 0 ||
+                stockOut.length > 0;
+            if (!hasData) { banner.innerHTML = ''; return; }
+            if (age >= RETENTION_DAYS) {
+                banner.innerHTML =
+                    `<div class="reset-banner"><div class="d-flex justify-content-between flex-wrap gap-2">
+                    <div><i class="bi bi-exclamation-triangle-fill text-danger me-2"></i><strong>⚠️ DATA RETENTION!</strong> ${age} days old</div>
+                    <div><button class="btn btn-danger btn-sm" id="resetNowBtn"><i class="bi bi-trash me-1"></i>Reset</button>
+                    <button class="btn btn-outline-secondary btn-sm" id="dismissResetBanner">Dismiss</button></div></div></div>`;
+                document.getElementById('resetNowBtn')?.addEventListener('click', resetSettingsOnly);
+                document.getElementById('dismissResetBanner')?.addEventListener('click', function() { banner.innerHTML =
+                        ''; });
+            } else if (age >= RETENTION_DAYS - 30 && hasData) {
+                banner.innerHTML =
+                    `<div class="reset-banner"><div class="d-flex justify-content-between flex-wrap gap-2">
+                    <div><i class="bi bi-clock-history text-warning me-2"></i>⏳ ${RETENTION_DAYS - age} days until data expires</div>
+                    <div><button class="btn btn-outline-warning btn-sm" id="viewRetentionDetails">View</button></div></div></div>`;
+                document.getElementById('viewRetentionDetails')?.addEventListener('click', function() { toast(
+                        `Data age: ${age} days. Max: ${RETENTION_DAYS} days`); });
+            }
+        }
+
+        // ============================================================
+        //  RESET FUNCTIONS
+        // ============================================================
+        function resetSettingsOnly() {
+            if (confirm(
+                    "This will only clear Settings (price per kg, bonus rate, etc.). All farmers and records will be KEPT. Continue?"
+                    )) {
+                settings = { pricePerKg: 0.50, bonusRate: 5, volumeTier: 10000, volumeBonusExtra: 10 };
+                document.getElementById('pricePerKg').value = settings.pricePerKg;
+                document.getElementById('bonusRate').value = settings.bonusRate;
+                document.getElementById('volumeTier').value = settings.volumeTier;
+                document.getElementById('volumeBonusExtra').value = settings.volumeBonusExtra;
+                saveAllData();
+                toast('⚙️ Settings reset. Farmers and records are safe.');
+                renderAll();
+            }
+        }
+
+        function factoryReset() {
+            if (confirm("DANGER: This will delete ALL farmers, records, loans, bonuses, and settings. Are you sure?")) {
+                if (confirm("Last warning. Delete everything? This cannot be undone!")) {
+                    indexedDB.deleteDatabase(DB_NAME);
+                    localStorage.clear();
+                    location.reload();
+                }
+            }
+        }
+
+        // ============================================================
+        //  BACKUP & RESTORE
+        // ============================================================
+        document.getElementById('exportBackupBtn').addEventListener('click', function() {
+            const backup = {
+                farmers: farmers,
+                pcRecords: pcRecords,
+                cashIn: cashIn,
+                cashOut: cashOut,
+                stockIn: stockIn,
+                stockOut: stockOut,
+                loans: loans,
+                bonusHistory: bonusHistory,
+                settings: settings,
+                systemMeta: systemMeta,
+                version: '1.0',
+                exportedAt: new Date().toISOString()
+            };
+            const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `EcomGhana_Backup_${new Date().toISOString().split('T')[0]}.json`;
+            link.click();
+            toast('📦 Backup exported successfully');
+        });
+
+        document.getElementById('importBackupBtn').addEventListener('click', function() {
+            document.getElementById('importBackupInput').click();
+        });
+
+        document.getElementById('importBackupInput').addEventListener('change', async function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = async function(ev) {
+                try {
+                    const data = JSON.parse(ev.target.result);
+                    if (!data.farmers || !data.pcRecords) {
+                        toast('❌ Invalid backup file');
+                        return;
+                    }
+                    if (!confirm(
+                            `This will REPLACE all current data with the backup from ${data.exportedAt || 'unknown date'}. Are you sure?`
+                            )) {
+                        document.getElementById('importBackupInput').value = '';
+                        return;
+                    }
+
+                    const stores = ['farmers', 'records', 'settings'];
+                    for (const store of stores) {
+                        const all = await getAllData(store);
+                        for (const item of all) {
+                            await deleteData(store, item.id || item.key);
+                        }
+                    }
+
+                    for (const f of data.farmers) {
+                        if (!f.telephone) f.telephone = '';
+                        await addData('farmers', f);
+                    }
+
+                    const recordTypes = ['pcRecords', 'cashIn', 'cashOut', 'stockIn', 'stockOut', 'loans', 'bonusHistory'];
+                    for (const type of recordTypes) {
+                        const items = data[type] || [];
+                        for (const item of items) {
+                            await addData('records', item);
+                        }
+                    }
+
+                    if (data.settings) {
+                        await updateData('settings', { key: 'appSettings', value: data.settings });
+                    }
+                    if (data.systemMeta) {
+                        await updateData('settings', { key: 'systemMeta', value: data.systemMeta });
+                    }
+
+                    toast('✅ Backup restored successfully! Reloading data...');
+                    document.getElementById('importBackupInput').value = '';
+                    await loadAllData();
+                    renderAll();
+                } catch (err) {
+                    toast('❌ Error importing backup: ' + err.message);
+                    console.error(err);
+                }
+            };
+            reader.readAsText(file);
+        });
+
+        document.getElementById('quickExportBackup').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.getElementById('exportBackupBtn').click();
+        });
+
+        // ============================================================
+        //  NEW TWO‑TAB FARMER MODAL LOGIC
+        // ============================================================
+        function openFarmerModal(id) {
+            const modal = new bootstrap.Modal(document.getElementById('farmerModal'));
+            document.getElementById('farmerEditId').value = id || '';
+            // Reset forms and validation states
+            document.getElementById('mainForm').reset();
+            document.getElementById('mainForm').classList.remove('was-validated');
+            document.getElementById('casualForm').reset();
+            document.getElementById('casualForm').classList.remove('was-validated');
+
+            const mainTab = document.getElementById('main-tab');
+            const casualTab = document.getElementById('casual-tab');
+            const mainContainer = document.getElementById('mainFormContainer');
+            const casualContainer = document.getElementById('casualFormContainer');
+
+            if (id) {
+                const f = farmers.find(x => x.id === id);
+                if (f) {
+                    if (f.type === 'registered') {
+                        // Activate main tab
+                        const tab = new bootstrap.Tab(mainTab);
+                        tab.show();
+                        document.getElementById('mainName').value = f.name;
+                        document.getElementById('mainGhanaCard').value = f.ghanaCard || '';
+                        document.getElementById('mainTelephone').value = f.telephone || '';
+                        document.getElementById('mainDob').value = f.dob || '';
+                        document.getElementById('mainStation').value = f.station || DEFAULT_STATION;
+                    } else {
+                        // Activate casual tab
+                        const tab = new bootstrap.Tab(casualTab);
+                        tab.show();
+                        document.getElementById('casualName').value = f.name;
+                        document.getElementById('casualGhanaCard').value = f.ghanaCard || generateWalkInCard();
+                    }
+                }
+            } else {
+                // New farmer: default to main, generate casual card
+                const tab = new bootstrap.Tab(mainTab);
+                tab.show();
+                document.getElementById('mainName').value = '';
+                document.getElementById('mainGhanaCard').value = '';
+                document.getElementById('mainTelephone').value = '';
+                document.getElementById('mainDob').value = '';
+                document.getElementById('mainStation').value = DEFAULT_STATION;
+                document.getElementById('casualName').value = '';
+                document.getElementById('casualGhanaCard').value = generateWalkInCard();
+            }
+            modal.show();
+        }
+
+        // Helper to toggle validation classes
+        function validateField(input, regex) {
+            const value = input.value.trim();
+            const isValid = regex ? regex.test(value) : value !== '';
+            input.classList.toggle('is-invalid', !isValid);
+            return isValid;
+        }
+
+        function validateForm(formId, fields) {
+            const form = document.getElementById(formId);
+            let allValid = true;
+            for (const { id, regex, required } of fields) {
+                const input = document.getElementById(id);
+                if (required) {
+                    const valid = validateField(input, regex);
+                    if (!valid) allValid = false;
+                }
+            }
+            form.classList.add('was-validated');
+            return allValid;
+        }
+
+        // Save Main Farmer
+        document.getElementById('saveMainFarmerBtn').addEventListener('click', async function() {
+            const fields = [
+                { id: 'mainName', required: true },
+                { id: 'mainGhanaCard', required: true, regex: /^GHA-\d{9}-\d$/ },
+                { id: 'mainTelephone', required: true },
+                { id: 'mainDob', required: true }
+            ];
+            if (!validateForm('mainForm', fields)) {
+                toast('❌ Please fill in all required fields correctly.');
+                return;
+            }
+
+            const id = document.getElementById('farmerEditId').value;
+            const name = document.getElementById('mainName').value.trim();
+            const ghanaCard = document.getElementById('mainGhanaCard').value.trim();
+            const telephone = document.getElementById('mainTelephone').value.trim();
+            const dob = document.getElementById('mainDob').value;
+            const station = document.getElementById('mainStation').value.trim() || DEFAULT_STATION;
+            const type = 'registered';
+
+            const farmerData = { name, ghanaCard, telephone, dob, station, type };
+            console.log('✅ Main Farmer Data:', farmerData);
+            await saveFarmerData(id, farmerData);
+        });
+
+        // Save Casual Farmer
+        document.getElementById('saveCasualFarmerBtn').addEventListener('click', async function() {
+            const fields = [
+                { id: 'casualName', required: true }
+            ];
+            if (!validateForm('casualForm', fields)) {
+                toast('❌ Please enter the full name.');
+                return;
+            }
+
+            const id = document.getElementById('farmerEditId').value;
+            const name = document.getElementById('casualName').value.trim();
+            const ghanaCard = document.getElementById('casualGhanaCard').value.trim();
+            const type = 'casual';
+
+            const farmerData = { name, ghanaCard, type, telephone: '', dob: '', station: '' };
+            console.log('✅ Casual Farmer Data:', farmerData);
+            await saveFarmerData(id, farmerData);
+        });
+
+        async function saveFarmerData(id, data) {
+            try {
+                if (id) {
+                    const f = farmers.find(x => x.id === id);
+                    if (f) {
+                        f.name = data.name;
+                        f.ghanaCard = data.ghanaCard;
+                        f.telephone = data.telephone || '';
+                        f.dob = data.dob || null;
+                        f.station = data.station || '';
+                        f.type = data.type;
+                        f.status = f.status || 'active';
+                        await updateData('farmers', f);
+                        toast(`✅ ${data.name} updated`);
+                    }
+                } else {
+                    const newId = generateFarmerId();
+                    const newFarmer = { id: newId, ...data, status: 'active' };
+                    farmers.push(newFarmer);
+                    await addData('farmers', newFarmer);
+                    if (pcRecords.length === 0 && !systemMeta.dataStartDate) {
+                        systemMeta.dataStartDate = new Date().toISOString();
+                        await saveAllData();
+                    }
+                    toast(`🎉 ${data.name} registered! ID: ${newId} (${data.type === 'registered' ? 'Registered' : 'Casual'})`);
+                }
+                await saveAllData();
+                renderAll();
+                bootstrap.Modal.getInstance(document.getElementById('farmerModal')).hide();
+            } catch (e) {
+                console.error('❌ Error saving farmer:', e);
+                toast('❌ Error saving farmer: ' + e.message);
+            }
+        }
+
+        // ============================================================
+        //  P.C RECORD MODAL (unchanged)
+        // ============================================================
+        let bagsManuallyEdited = false;
+        let paymentManuallyEdited = false;
+
+        function updatePcCalculations() {
+            const kg = parseFloat(document.getElementById('pcKg').value) || 0;
+            const rate = parseFloat(document.getElementById('pcRate').value) || getPricePerKg();
+            const bagsInput = document.getElementById('pcBags');
+            const paymentInput = document.getElementById('pcPayment');
+
+            if (!bagsManuallyEdited) {
+                if (kg > 0) {
+                    const bags = kg / BAG_SIZE;
+                    bagsInput.value = bags.toFixed(2);
+                } else {
+                    bagsInput.value = '';
+                }
+            }
+
+            if (!paymentManuallyEdited) {
+                if (kg > 0 && rate > 0) {
+                    const payment = kg * rate;
+                    paymentInput.value = payment.toFixed(2);
+                } else {
+                    paymentInput.value = '';
+                }
+            }
+        }
+         document.getElementById('pcKg').addEventListener('input', function() {
+            bagsManuallyEdited = false;
+            paymentManuallyEdited = false;
+            updatePcCalculations();
+        });
+
+        document.getElementById('pcRate').addEventListener('input', function() {
+            paymentManuallyEdited = false;
+            updatePcCalculations();
+        });
+
+        document.getElementById('pcBags').addEventListener('input', function() {
+            if (this.value.trim() !== '') {
+                bagsManuallyEdited = true;
+            } else {
+                bagsManuallyEdited = false;
+            }
+        });
+
+        document.getElementById('pcPayment').addEventListener('input', function() {
+            if (this.value.trim() !== '') {
+                paymentManuallyEdited = true;
+            } else {
+                paymentManuallyEdited = false;
+            }
+        });
+
+        function openPcModal(id) {
+            const modal = new bootstrap.Modal(document.getElementById('pcModal'));
+            document.getElementById('pcEditId').value = id || '';
+            document.getElementById('pcStation').value = DEFAULT_STATION;
+
+            bagsManuallyEdited = false;
+            paymentManuallyEdited = false;
+
+            if (id) {
+                const r = pcRecords.find(x => x.id === id);
+                if (r) {
+                    const f = farmers.find(x => x.id === r.farmerId);
+                    if (f) {
+                        document.getElementById('pcFarmerSearch').value = f.name;
+                        document.getElementById('pcFarmerId').value = f.id;
+                        selectedFarmerId = f.id;
+                        document.getElementById('pcStation').value = f.station || DEFAULT_STATION;
+                    } else {
+                        document.getElementById('pcFarmerSearch').value = '';
+                        document.getElementById('pcFarmerId').value = '';
+                        selectedFarmerId = null;
+                    }
+                    document.getElementById('pcDate').value = r.date;
+                    document.getElementById('pcKg').value = r.kg || '';
+                    document.getElementById('pcBags').value = (r.bags || 0).toFixed(2);
+                    document.getElementById('pcRate').value = r.rate || getPricePerKg();
+                    document.getElementById('pcPayment').value = (r.payment || 0).toFixed(2);
+                    bagsManuallyEdited = false;
+                    paymentManuallyEdited = false;
+                    updatePcCalculations();
+                }
+            } else {
+                const activeFarmers = farmers.filter(f => f.status === 'active');
+                if (activeFarmers.length > 0) {
+                    const f = activeFarmers[0];
+                    document.getElementById('pcFarmerSearch').value = f.name;
+                    document.getElementById('pcFarmerId').value = f.id;
+                    selectedFarmerId = f.id;
+                    document.getElementById('pcStation').value = f.station || DEFAULT_STATION;
+                } else {
+                    document.getElementById('pcFarmerSearch').value = '';
+                    document.getElementById('pcFarmerId').value = '';
+                    selectedFarmerId = null;
+                }
+                document.getElementById('pcDate').value = nowDate();
+                document.getElementById('pcKg').value = '';
+                document.getElementById('pcBags').value = '';
+                document.getElementById('pcRate').value = getPricePerKg();
+                document.getElementById('pcPayment').value = '';
+                bagsManuallyEdited = false;
+                paymentManuallyEdited = false;
+            }
+            modal.show();
+        }
+
+        document.getElementById('savePcBtn').addEventListener('click', async function() {
+            const editId = document.getElementById('pcEditId').value;
+            const farmerId = document.getElementById('pcFarmerId').value;
+            const date = document.getElementById('pcDate').value;
+            const kg = parseFloat(document.getElementById('pcKg').value) || 0;
+            const bags = parseFloat(document.getElementById('pcBags').value) || 0;
+            const rate = parseFloat(document.getElementById('pcRate').value) || getPricePerKg();
+            const payment = parseFloat(document.getElementById('pcPayment').value) || 0;
+            const station = document.getElementById('pcStation').value.trim() || DEFAULT_STATION;
+
+            if (!farmerId) { toast('❌ Please select a farmer'); return; }
+            if (getFarmerStatus(farmerId) !== 'active') { toast('❌ Farmer is archived. Cannot add/edit records.'); return; }
+            if (!date) { toast('❌ Date is required'); return; }
+            if (kg <= 0) { toast('❌ Cocoa kg must be greater than 0'); return; }
+            if (bags <= 0) { toast('❌ Bags must be greater than 0'); return; }
+            if (rate <= 0) { toast('❌ Rate must be greater than 0'); return; }
+
+            try {
+                const fname = getFarmerName(farmerId);
+                const pcId = editId ? parseInt(editId) : Date.now() + Math.random();
+
+                if (editId) {
+                    const r = pcRecords.find(x => x.id === parseInt(editId));
+                    if (!r) { toast('❌ Record not found'); return; }
+                    r.farmerId = farmerId;
+                    r.date = date;
+                    r.kg = kg;
+                    r.bags = bags;
+                    r.rate = rate;
+                    r.payment = payment;
+                    r.station = station;
+                    await updateData('records', r);
+
+                    const existingCashOut = cashOut.find(c => c.pcId === parseInt(editId));
+                    if (existingCashOut) {
+                        existingCashOut.date = date;
+                        existingCashOut.pcName = station;
+                        existingCashOut.farmerName = fname;
+                        existingCashOut.farmerId = farmerId;
+                        existingCashOut.amount = payment;
+                        await updateData('records', existingCashOut);
+                    } else {
+                        const newCashOut = { id: Date.now() + Math.random(), pcId: parseInt(editId), farmerId: farmerId,
+                            date, pcName: station, farmerName: fname, farmers: 1, amount: payment,
+                            recordType: 'cashOut' };
+                        cashOut.push(newCashOut);
+                        await addData('records', newCashOut);
+                    }
+
+                    const existingStockIn = stockIn.find(s => s.pcId === parseInt(editId));
+                    if (existingStockIn) {
+                        existingStockIn.date = date;
+                        existingStockIn.pcName = station;
+                        existingStockIn.bags = bags;
+                        existingStockIn.kg = kg;
+                        existingStockIn.amount = payment;
+                        existingStockIn.farmerId = farmerId;
+                        await updateData('records', existingStockIn);
+                    } else {
+                        const newStockIn = { id: Date.now() + Math.random(), pcId: parseInt(editId), farmerId: farmerId,
+                            date, pcName: station, bags, kg, amount: payment, recordType: 'stockIn' };
+                        stockIn.push(newStockIn);
+                        await addData('records', newStockIn);
+                    }
+                    toast(`✅ P.C record updated for ${fname}`);
+                } else {
+                    if (pcRecords.length === 0 && !systemMeta.dataStartDate) {
+                        systemMeta.dataStartDate = new Date().toISOString();
+                        await saveAllData();
+                    }
+
+                    const newPc = { id: pcId, farmerId, date, kg, bags, rate, payment, station, recordType: 'pcRecords' };
+                    pcRecords.push(newPc);
+                    await addData('records', newPc);
+
+                    const newCashOut = { id: Date.now() + Math.random(), pcId: pcId, farmerId: farmerId, date,
+                        pcName: station, farmerName: fname, farmers: 1, amount: payment, recordType: 'cashOut' };
+                    cashOut.push(newCashOut);
+                    await addData('records', newCashOut);
+
+                    const newStockIn = { id: Date.now() + Math.random(), pcId: pcId, farmerId: farmerId, date,
+                        pcName: station, bags, kg, amount: payment, recordType: 'stockIn' };
+                    stockIn.push(newStockIn);
+                    await addData('records', newStockIn);
+
+                    toast(`🌱 ${kg}kg recorded for ${fname}!`);
+                }
+
+                await saveAllData();
+                renderAll();
+
+                const modalEl = document.getElementById('pcModal');
+                const modal = bootstrap.Modal.getInstance(modalEl);
+                if (modal) modal.hide();
+
+                document.getElementById('pcKg').value = '';
+                document.getElementById('pcBags').value = '';
+                document.getElementById('pcRate').value = getPricePerKg();
+                document.getElementById('pcPayment').value = '';
+                document.getElementById('pcDate').value = nowDate();
+                document.getElementById('pcFarmerSearch').value = '';
+                document.getElementById('pcFarmerId').value = '';
+                selectedFarmerId = null;
+                bagsManuallyEdited = false;
+                paymentManuallyEdited = false;
+
+            } catch (error) {
+                console.error('❌ Error saving PC record:', error);
+                toast('❌ Error saving record: ' + error.message);
+            }
+        });
+
+        // ============================================================
+        //  CASH IN MODAL
+        // ============================================================
+        function openCashInModal(id) {
+            const modal = new bootstrap.Modal(document.getElementById('cashInModal'));
+            document.getElementById('cashInEditId').value = id || '';
+            if (id) {
+                const r = cashIn.find(x => x.id === id);
+                if (r) {
+                    document.getElementById('cashInDate').value = r.date;
+                    document.getElementById('cashInSource').value = r.source;
+                    document.getElementById('cashInPurpose').value = r.purpose;
+                    document.getElementById('cashInAmount').value = r.amount || '';
+                }
+            } else {
+                document.getElementById('cashInDate').value = nowDate();
+                document.getElementById('cashInSource').value = 'AgroEcom Depo';
+                document.getElementById('cashInPurpose').value = 'Cocoa Purchase Clerk';
+                document.getElementById('cashInAmount').value = '';
+            }
+            modal.show();
+        }
+
+        document.getElementById('saveCashInBtn').addEventListener('click', async () => {
+            const id = document.getElementById('cashInEditId').value;
+            const date = document.getElementById('cashInDate').value;
+            const source = document.getElementById('cashInSource').value;
+            const purpose = document.getElementById('cashInPurpose').value;
+            const amount = parseFloat(document.getElementById('cashInAmount').value) || 0;
+            if (!date) return toast('❌ Date required');
+            if (amount <= 0) return toast('❌ Amount must be > 0');
+            if (id) {
+                const r = cashIn.find(x => x.id === parseInt(id));
+                if (r) { r.date = date;
+                    r.source = source;
+                    r.purpose = purpose;
+                    r.amount = amount; }
+                await updateData('records', r);
+                toast('✅ Cash in updated');
+            } else {
+                const newCashIn = { id: Date.now(), date, source, purpose, amount, recordType: 'cashIn' };
+                cashIn.push(newCashIn);
+                await addData('records', newCashIn);
+                toast('💰 Cash In recorded: ' + amount.toFixed(2) + ' GHS');
+            }
+            await saveAllData();
+            renderAll();
+            bootstrap.Modal.getInstance(document.getElementById('cashInModal')).hide();
+            document.getElementById('cashInAmount').value = '';
+        });
+
+        // ============================================================
+        //  STOCK OUT / DISPATCH MODAL
+        // ============================================================
+        function openStockOutModal(id) {
+            const modal = new bootstrap.Modal(document.getElementById('stockOutModal'));
+            document.getElementById('stockOutEditId').value = id || '';
+            if (id) {
+                const r = stockOut.find(x => x.id === id);
+                if (r) {
+                    document.getElementById('stockOutDate').value = r.date;
+                    document.getElementById('stockOutPc').value = r.pcName;
+                    document.getElementById('stockOutBags').value = r.bags || '';
+                    document.getElementById('stockOutKg').value = r.kg || '';
+                    document.getElementById('stockOutNote').value = r.note || '';
+                }
+            } else {
+                document.getElementById('stockOutDate').value = nowDate();
+                document.getElementById('stockOutBags').value = '';
+                document.getElementById('stockOutNote').value = '';
+            }
+            modal.show();
+        }
+
+        document.getElementById('stockOutBags').addEventListener('input', function() {
+            const bags = parseFloat(this.value) || 0;
+            document.getElementById('stockOutKg').value = (bags * BAG_SIZE).toFixed(1);
+        });
+
+        document.getElementById('saveStockOutBtn').addEventListener('click', async () => {
+            const id = document.getElementById('stockOutEditId').value;
+            const date = document.getElementById('stockOutDate').value;
+            const pcName = document.getElementById('stockOutPc').value;
+            const bags = parseFloat(document.getElementById('stockOutBags').value) || 0;
+            const kg = parseFloat(document.getElementById('stockOutKg').value) || 0;
+            const note = document.getElementById('stockOutNote').value.trim();
+
+            if (!date) return toast('❌ Date required');
+            if (!pcName) return toast('❌ PC Name required');
+            if (bags <= 0) return toast('❌ Bags must be > 0');
+
+            const currentStockIn = stockIn.filter(r => getFarmerStatus(r.farmerId) === 'active')
+                .reduce((s, r) => s + (r.kg || 0), 0);
+            const currentStockOut = stockOut.filter(r => getFarmerStatus(r.farmerId) === 'active')
+                .reduce((s, r) => s + (r.kg || 0), 0);
+            let balance = currentStockIn - currentStockOut;
+
+            if (id) {
+                const oldRec = stockOut.find(x => x.id === parseInt(id));
+                if (oldRec) balance += (oldRec.kg || 0);
+            }
+
+            if (kg > balance) {
+                toast(`❌ Insufficient stock! You have ${balance.toFixed(1)} kg. Cannot dispatch ${kg.toFixed(1)} kg.`);
+                return;
+            }
+
+            if (id) {
+                const r = stockOut.find(x => x.id === parseInt(id));
+                if (r) { r.date = date;
+                    r.pcName = pcName;
+                    r.bags = bags;
+                    r.kg = kg;
+                    r.note = note; }
+                await updateData('records', r);
+                toast('✅ Dispatch updated');
+            } else {
+                const newStockOut = { id: Date.now(), date, pcName, bags, kg, note, status: 'Dispatched',
+                    recordType: 'stockOut' };
+                stockOut.push(newStockOut);
+                await addData('records', newStockOut);
+                toast('🚚 Dispatch recorded to Ecom Depo');
+            }
+            await saveAllData();
+            renderAll();
+            bootstrap.Modal.getInstance(document.getElementById('stockOutModal')).hide();
+            document.getElementById('stockOutBags').value = '';
+            document.getElementById('stockOutNote').value = '';
+        });
+
+        // ============================================================
+        //  LOAN MODAL
+        // ============================================================
+        function openLoanModal(id) {
+            const modal = new bootstrap.Modal(document.getElementById('loanModal'));
+            document.getElementById('loanEditId').value = id || '';
+            populateLoanDropdown();
+            if (id) {
+                const r = loans.find(x => x.id === id);
+                if (r) {
+                    document.getElementById('loanFarmerId').value = r.farmerId;
+                    document.getElementById('loanDate').value = r.date;
+                    document.getElementById('loanAmount').value = r.amount || '';
+                    document.getElementById('loanPurpose').value = r.purpose || 'Cocoa Inputs';
+                    document.getElementById('loanStatus').value = r.status || 'Active';
+                }
+            } else {
+                document.getElementById('loanDate').value = nowDate();
+                document.getElementById('loanAmount').value = '';
+                document.getElementById('loanPurpose').value = 'Cocoa Inputs';
+                document.getElementById('loanStatus').value = 'Active';
+            }
+            modal.show();
+        }
+
+        function populateLoanDropdown() {
+            const sel = document.getElementById('loanFarmerId');
+            const registeredActive = farmers.filter(f => (f.type || 'registered') === 'registered' && f.status === 'active');
+            if (registeredActive.length === 0) {
+                sel.innerHTML = '<option value="">No registered active farmers</option>';
+            } else {
+                sel.innerHTML = registeredActive.map(f =>
+                    `<option value="${f.id}">${f.id} - ${f.name} ${f.telephone ? '📞'+f.telephone : ''}</option>`
+                ).join('');
+            }
+        }
+
+        document.getElementById('loanModal').addEventListener('shown.bs.modal', function() {
+            populateLoanDropdown();
+        });
+
+        document.getElementById('saveLoanBtn').addEventListener('click', async () => {
+            const id = document.getElementById('loanEditId').value;
+            const farmerId = document.getElementById('loanFarmerId').value;
+            const date = document.getElementById('loanDate').value;
+            const amount = parseFloat(document.getElementById('loanAmount').value) || 0;
+            const purpose = document.getElementById('loanPurpose').value;
+            const status = document.getElementById('loanStatus').value;
+            if (!farmerId) return toast('❌ Select farmer');
+            const farmer = farmers.find(f => f.id === farmerId);
+            if (!farmer) return toast('❌ Farmer not found');
+            if ((farmer.type || 'registered') !== 'registered') {
+                return toast('❌ Only Registered Farmers can receive loans. This farmer is Casual.');
+            }
+            if (farmer.status !== 'active') {
+                return toast('❌ Farmer is archived. Cannot issue loans.');
+            }
+            if (!date) return toast('❌ Date required');
+            if (amount <= 0) return toast('❌ Amount must be > 0');
+            if (id) {
+                const r = loans.find(x => x.id === parseInt(id));
+                if (r) { r.farmerId = farmerId;
+                    r.date = date;
+                    r.amount = amount;
+                    r.purpose = purpose;
+                    r.status = status; }
+                await updateData('records', r);
+                toast('✅ Loan updated');
+            } else {
+                const newLoan = { id: Date.now(), farmerId, date, amount, purpose, status, recordType: 'loans' };
+                loans.push(newLoan);
+                await addData('records', newLoan);
+                toast('💳 Loan recorded: ' + amount.toFixed(2) + ' GHS to ' + getFarmerName(farmerId));
+            }
+            await saveAllData();
+            renderAll();
+            bootstrap.Modal.getInstance(document.getElementById('loanModal')).hide();
+            document.getElementById('loanAmount').value = '';
+        });
+
+        // ============================================================
+        //  POPULATE DROPDOWNS
+        // ============================================================
+        function populateDropdowns() {
+            const activeFarmers = farmers.filter(f => f.status === 'active');
+            populateLoanDropdown();
+            const pcNames = getPcNames();
+            ['stockOutPc'].forEach(id => {
+                const sel = document.getElementById(id);
+                if (sel) {
+                    const current = sel.value;
+                    sel.innerHTML = pcNames.map(n => `<option value="${n}">${n}</option>`).join('');
+                    if (pcNames.includes(current)) sel.value = current;
+                }
+            });
+        }
+
+        // ============================================================
+        //  SETTINGS
+        // ============================================================
+        document.getElementById('saveSettingsBtn').addEventListener('click', async () => {
+            settings.pricePerKg = parseFloat(document.getElementById('pricePerKg').value) || 0.50;
+            settings.bonusRate = parseFloat(document.getElementById('bonusRate').value) || 5;
+            settings.volumeTier = parseFloat(document.getElementById('volumeTier').value) || 10000;
+            settings.volumeBonusExtra = parseFloat(document.getElementById('volumeBonusExtra').value) || 10;
+            await saveAllData();
+            toast('⚙️ Settings saved');
+        });
+
+        document.getElementById('resetSettingsOnlyBtn').addEventListener('click', resetSettingsOnly);
+        document.getElementById('factoryResetBtn').addEventListener('click', factoryReset);
+
+        // ============================================================
+        //  INIT
+        // ============================================================
+        async function initApp() {
+            try {
+                await openDB();
+                const migrated = await migrateFromLocalStorage();
+                await loadAllData();
+
+                if (!farmers) farmers = [];
+                if (!pcRecords) pcRecords = [];
+                if (!cashIn) cashIn = [];
+                if (!cashOut) cashOut = [];
+                if (!stockIn) stockIn = [];
+                if (!stockOut) stockOut = [];
+                if (!loans) loans = [];
+                if (!bonusHistory) bonusHistory = [];
+
+                for (const f of farmers) {
+                    if (!f.status) f.status = 'active';
+                    if (!f.dob) f.dob = null;
+                    if (!f.telephone) f.telephone = '';
+                }
+
+                document.getElementById('bonusYear').value = new Date().getFullYear();
+                document.getElementById('pricePerKg').value = getPricePerKg();
+                document.getElementById('bonusRate').value = getBonusRate();
+                document.getElementById('volumeTier').value = getVolumeTier();
+                document.getElementById('volumeBonusExtra').value = getVolumeBonusExtra();
+
+                initSearchableDropdown();
+
+                renderAll();
+
+                document.querySelector('button[data-bs-target="#farmers"]')?.addEventListener('shown.bs.tab', function() {
+                    clearSearch();
+                });
+
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape') {
+                        const input = document.getElementById('farmerSearchInput');
+                        if (document.activeElement === input) { clearSearch();
+                            input.blur(); }
+                    }
+                });
+
+                updateStorageIndicators();
+
+                if (migrated) {
+                    toast('📦 Data migrated from localStorage to IndexedDB!');
+                }
+
+                console.log('🌿 AgroEcom Ghana · Cocoa Management System ready!');
+                console.log(
+                    `📊 ${farmers.filter(f => f.status === 'active').length} active farmers, ${pcRecords.filter(r => getFarmerStatus(r.farmerId) === 'active').length} active PC records, ${stockOut.length} dispatches, ${loans.filter(l => getFarmerStatus(l.farmerId) === 'active').length} active loans`
+                    );
+            } catch (e) {
+                console.error('❌ Init error:', e);
+                toast('❌ Failed to initialize. Check console.');
+            }
+        }
+
+        document.getElementById('bonusYear').addEventListener('change', function() { renderBonuses(); });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🌿 AgroEcom Ghana loaded, awaiting unlock.');
+        });
+    </script>
+    <footer style="
+    background: white;
+    color: rgb(96, 92, 92);
+    text-align: center;
+    padding: 12px;
+    font-size: 13px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    border-top: 2px solid;
+    font-family: Arial, sans-serif;
+    ">
+    @ <span id="footerYear"></span> Cocoa Purchase clerk Syteme Management. All Right Reserved.
+</footer>
+</body>
+</html>
