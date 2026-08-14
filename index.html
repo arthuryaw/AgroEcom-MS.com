@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AgroEcom Ghana · Cocoa Management System</title>
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <!-- Tailwind CSS (preflight disabled to avoid conflicts with Bootstrap) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { preflight: false };
+    </script>
+
+    <link rel="stylesheet" href="style.css" />
+    
+    <!-- Offline Mode Support -->
+    <script src="offline-storage.js"></script>
+    <script>
+        // Register Service Worker for offline support
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js')
+                .then((reg) => {
+                    console.log('Service Worker registered for desktop');
+                    if (navigator.storage && navigator.storage.persist) {
+                        navigator.storage.persist().then((p) => {
+                            console.log('Persistent storage:', p);
+                        });
+                    }
+                })
+                .catch((err) => console.warn('SW registration failed:', err));
+        }
+
+        // Offline/Online detection
+        window.addEventListener('online', () => {
+            console.log('✅ Back online');
+            localStorage.setItem('isOnline', 'true');
+            document.body.style.opacity = '1';
+        });
+
+        window.addEventListener('offline', () => {
+            console.log('❌ Offline detected');
+            localStorage.setItem('isOnline', 'false');
+            document.body.style.opacity = '0.9';
+        });
+    </script>
+    
+    <!-- Mobile Responsive Enhancements -->
+    <style>
+        /* Mobile Optimizations */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0.5rem;
+            }
+
+            .nav-tabs {
+                overflow-x: auto;
+                flex-wrap: nowrap;
+            }
+
+            .nav-tabs .nav-link {
+                font-size: 0.85rem;
+                padding: 0.5rem 0.75rem;
+                white-space: nowrap;
+            }
+
+            .nav-tabs .nav-link i {
+                display: none;
+            }
+
+            /* Stack columns on mobile */
+            .row > [class*="col-"] {
+                margin-bottom: 1rem;
+            }
+
+            /* Make buttons larger for touch */
+            .btn {
+                min-height: 44px;
+                font-size: 0.95rem;
+            }
+
+            /* Hide less important columns in tables */
+            table th:nth-child(n+5),
+            table td:nth-child(n+5) {
+                display: none;
+            }
+
+            .farmers-table th:nth-child(-n+4),
+            .farmers-table td:nth-child(-n+4) {
+                display: table-cell;
+            }
+
+            /* Full width modals */
+            .modal-dialog {
+                margin: 0;
+            }
+
+            .modal-content {
+                border-radius: 0;
+            }
+
+            /* Responsive header */
+            .d-flex.align-items-center.justify-content-between {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: flex-start;
+            }
+
+            .admin-avatar {
+                width: 35px;
+                height: 35px;
+            }
+
+            /* Hide less important info on mobile */
+            .district-badge {
+                font-size: 0.8rem;
+            }
+
+            /* Simplify dashboard stats on mobile */
+            .dashboard-stat {
+                padding: 1rem;
+            }
+
+            .dashboard-stat h4 {
+                font-size: 1.5rem;
+            }
+
+            /* Make tables scrollable on mobile */
+            table {
+                font-size: 0.85rem;
+            }
+
+            table td, table th {
+                padding: 0.5rem 0.25rem;
+            }
+
+            /* Simplify forms */
+            .form-control,
+            .form-select {
+                font-size: 16px; /* Prevents zoom on iOS */
+            }
+
+            /* Stack quick action buttons */
+            .export-dropdown-group {
+                display: flex;
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .export-dropdown-group .btn {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            /* Extra small devices */
+            .container {
+                padding: 0.25rem;
+            }
+
+            .modal-body {
+                padding: 0.75rem;
+            }
+
+            h1, h2, h3, h4, h5, h6 {
+                font-size: 0.95rem;
+            }
+
+            .btn-sm {
+                min-height: 40px;
+                padding: 0.4rem 0.6rem;
+            }
+
+            .py-4 {
+                padding-top: 0.5rem !important;
+                padding-bottom: 0.5rem !important;
+            }
+
+            .mb-4 {
+                margin-bottom: 1rem !important;
+            }
+
+            /* Hide theme toggle on very small screens */
+            .theme-toggle-btn {
+                display: none;
+            }
+
+            /* Stack header vertically */
+            .ecom-logo-text {
+                font-size: 1rem;
+            }
+
+            /* Center text in small screens */
+            .text-center {
+                text-align: center;
+            }
+        }
+
+        /* Touch-friendly improvements */
+        @media (hover: none) and (pointer: coarse) {
+            /* Mobile devices */
+            button, a, .nav-link {
+                min-height: 44px;
+                display: inline-flex;
+                align-items: center;
+                padding: 0.5rem 1rem;
+            }
+
+            .btn:active {
+                opacity: 0.8;
+                transform: scale(0.98);
+            }
+
+            /* Remove hover effects */
+            table tbody tr:hover {
+                background: none;
+            }
+
+            /* Enlarge clickable areas */
+            .nav-tabs .nav-link {
+                min-height: 40px;
+            }
+        }
+
+        /* Landscape mode adjustments */
+        @media (max-height: 600px) and (orientation: landscape) {
+            .container {
+                padding-top: 0.5rem;
+                padding-bottom: 0.5rem;
+            }
+
+            .nav-tabs {
+                margin-bottom: 0.5rem;
+            }
+
+            .tab-content {
+                max-height: calc(100vh - 200px);
+                overflow-y: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Spinner Overlay -->
+    <div class="spinner-overlay" id="spinnerOverlay">
+        <div class="spinner-box">
+            <div class="spinner-border text-success" role="status"></div>
+            <p class="mt-2 mb-0 text-muted">Loading...</p>
+        </div>
+    </div>
+
+    <!-- ============ ENTRANCE PASSWORD OVERLAY ============ -->
+    <div class="entrance-overlay" id="entranceOverlay">
+        <div class="entrance-card animate-fade-up">
+            <div class="text-center mb-4">
+                <div class="cocoa-leaf">🌿</div>
+                <h6 class="ecom-logo-text"><span class="e">Agro</span><span class="com">Ecom</span> Ghana</h6>
+                <p class="text-muted">Cocoa Management System</p>
+                <div class="bg-ecom mt-2"></div>
+                <div id="apiStatusBadge" class="mt-2"></div>
+            </div>
+            <form id="entranceForm">
+                <div class="mb-3">
+                    <label class="form-label fw-semibold"><i class="bi bi-person me-2"></i>Username</label>
+                    <input type="text" class="form-control" id="entranceUsername" placeholder="Enter username" value="AgroEcom" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label fw-semibold"><i class="bi bi-shield-lock me-2"></i>Password</label>
+                    <div class="password-input-group">
+                        <input type="password" class="form-control" id="entrancePassword" placeholder="Enter password" autofocus />
+                        <button class="toggle-password" id="toggleEntrancePassword" type="button"><i class="bi bi-eye"></i></button>
+                    </div>
+                    <div id="entranceError" class="text-danger small mt-2 d-none">❌ Invalid credentials</div>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 py-2 fw-semibold" id="loginBtn">
+                    <i class="bi bi-unlock me-2"></i>Login
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ============ MAIN APP ============ -->
+    <div id="mainApp" style="display:none;">
+        <div class="container py-4 animate-slide-left">
+            <!-- Header -->
+            <div class="d-flex align-items-center justify-content-between mb-4 flex-wrap gap-2 animate-fade-down">
+                <div>
+                    <h6 class="fw-bold" style="color: var(--text-primary);">
+                        <span class="cocoa-leaf cocoa-leaf-sm me-2">🌿</span>
+                        <span class="ecom-logo-text"><span class="e">Agro</span><span class="com">Ecom</span></span> <span class="text-muted">·</span> Ghana
+                        <span id="apiStatusBadgeHeader" class="ms-2"></span>
+                    </h6>
+                    <div class="d-flex align-items-center gap-2 flex-wrap">
+                        <span class="district-badge"><i class="bi bi-pin-map me-1"></i>Cocoa Purchase Clerk · Ghana</span>
+                        <span class="text-muted small"><i class="bi bi-people me-1"></i><span id="headerFarmerCount">0</span> farmers</span>
+                        <span class="text-muted small"><i class="bi bi-database"></i> <span id="storageCount">0</span> records</span>
+                    </div>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <button class="theme-toggle-btn" id="themeToggleBtn" title="Toggle theme"><i class="bi bi-moon-fill" id="themeIcon"></i></button>
+                    <span id="offlineStatusDesktop" class="badge bg-warning d-none" style="display: none !important;">
+                        <i class="bi bi-wifi-off me-1"></i>Offline
+                    </span>
+                    <button class="btn btn-outline-info btn-sm" id="syncBtn" title="Sync with server"><i class="bi bi-arrow-repeat"></i> Sync</button>
+                    <div class="d-flex align-items-center gap-2">
+                        <div class="admin-avatar">A</div>
+                        <div><span class="fw-semibold d-block" style="font-size:0.9rem; color: var(--text-primary);" id="headerUsername">Admin</span><span class="login-time" id="loginTimeDisplay">Online</span></div>
+                    </div>
+                    <button class="btn btn-outline-danger btn-sm" id="logoutBtn"><i class="bi bi-box-arrow-right"></i> Logout</button>
+                </div>
+            </div>
+
+            <div id="resetBannerContainer"></div>
+
+            <!-- Tabs -->
+            <ul class="nav nav-tabs mb-4" id="mainTabs" role="tablist">
+                <li class="nav-item"><button class="nav-link active" id="dashboard-tab" data-bs-toggle="tab" data-bs-target="#dashboard"><i class="bi bi-speedometer2 me-1"></i> Dashboard</button></li>
+                <li class="nav-item"><button class="nav-link" id="farmers-tab" data-bs-toggle="tab" data-bs-target="#farmers"><i class="bi bi-people me-1"></i> Farmers</button></li>
+                <li class="nav-item"><button class="nav-link" id="pc-tab" data-bs-toggle="tab" data-bs-target="#pc"><i class="bi bi-shop me-1"></i>Purchase Clerk Records</button></li>
+                <li class="nav-item"><button class="nav-link" id="cash-tab" data-bs-toggle="tab" data-bs-target="#cash"><i class="bi bi-cash-stack me-1"></i> Cash</button></li>
+                <li class="nav-item"><button class="nav-link" id="stock-tab" data-bs-toggle="tab" data-bs-target="#stock"><i class="bi bi-box-seam me-1"></i> Stock/Dispatch</button></li>
+                <li class="nav-item"><button class="nav-link" id="loan-tab" data-bs-toggle="tab" data-bs-target="#loan"><i class="bi bi-credit-card me-1"></i> Purchase Clerk Loans</button></li>
+                <li class="nav-item"><button class="nav-link" id="bonus-tab" data-bs-toggle="tab" data-bs-target="#bonus"><i class="bi bi-gift me-1"></i> Bonus</button></li>
+                <li class="nav-item"><button class="nav-link" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings"><i class="bi bi-gear me-1"></i> Settings</button></li>
+            </ul>
+
+            <div class="tab-content">
+                <!-- ========= DASHBOARD ========= -->
+                <div class="tab-pane fade show active" id="dashboard">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                        <h5 class="mb-0" style="color: var(--text-primary);"><i class="bi bi-speedometer2 me-2"></i>Dashboard</h5>
+                        <div class="dropdown">
+                            <button class="btn btn-primary btn-sm dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-lightning-charge-fill me-1"></i>Quick Actions
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#farmerModal"><i class="bi bi-person-plus me-2"></i>Register Farmer</a></li>
+                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#pcModal"><i class="bi bi-shop me-2"></i>Add Purchase Clerk Record</a></li>
+                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#cashInModal"><i class="bi bi-cash-coin me-2"></i>Record Cash In</a></li>
+                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#stockOutModal"><i class="bi bi-truck me-2"></i>Record Dispatch</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#" id="quickExportBackup"><i class="bi bi-download me-2"></i>Export Backup</a></li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="row g-4">
+                        <div class="col-md-3"><div class="dashboard-stat"><div class="stat-icon">👨‍🌾</div><h4 id="statFarmers">0</h4><span>Active Farmers</span></div></div>
+                        <div class="col-md-3"><div class="dashboard-stat"><div class="stat-icon">📋</div><h4 id="statPcRecords">0</h4><span>Purchase Clerk Records</span></div></div>
+                        <div class="col-md-3"><div class="dashboard-stat"><div class="stat-icon">💰</div><h4 id="statCashBalance">0</h4><span>Cash Balance (GHS)</span></div></div>
+                        <div class="col-md-3"><div class="dashboard-stat"><div class="stat-icon">📦</div><h4 id="statStockBalance">0</h4><span>Stock Balance (kg)</span></div></div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="card animate-slide-right">
+                                <div class="card-header"><i class="bi bi-speedometer2 me-2"></i>Quick Overview</div>
+                                <div class="card-body">
+                                    <div class="d-flex flex-wrap gap-3">
+                                        <div class="quick-stat-item"><i class="bi bi-arrow-down-circle text-success"></i> Cash In: <strong id="statCashIn">0</strong></div>
+                                        <div class="quick-stat-item"><i class="bi bi-arrow-up-circle text-danger"></i> Cash Out: <strong id="statCashOut">0</strong></div>
+                                        <div class="quick-stat-item"><i class="bi bi-box-seam text-primary"></i> Stock In: <strong id="statStockIn">0 kg</strong></div>
+                                        <div class="quick-stat-item"><i class="bi bi-truck text-warning"></i> Dispatched: <strong id="statStockOut">0 kg</strong></div>
+                                        <div class="quick-stat-item"><i class="bi bi-gift text-warning"></i> Total Bonus: <strong id="statTotalBonus">0 GHS</strong></div>
+                                        <div class="quick-stat-item"><i class="bi bi-credit-card text-warning"></i> Active Loans: <strong id="statActiveLoans">0</strong></div>
+                                        <div class="quick-stat-item"><i class="bi bi-clock-history text-info"></i> Dispatches: <strong id="statDispatchCount">0</strong></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-md-8">
+                            <div class="card animate-slide-left">
+                                <div class="card-header"><i class="bi bi-trophy-fill text-warning me-2"></i>🏆 Farmer of the Year <span class="text-muted small" id="topFarmerYear">2026</span></div>
+                                <div class="card-body" id="topFarmerDisplay"><div class="text-muted">No records yet.</div></div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card animate-slide-right">
+                                <div class="card-header"><i class="bi bi-clock-history me-2"></i>System Status</div>
+                                <div class="card-body">
+                                    <div><small>Total records:</small> <strong id="dashboardTotalRecords" style="color:var(--text-primary);">0</strong></div>
+                                    <div><small>Dispatches:</small> <strong id="dashboardDispatchCount" style="color:var(--text-primary);">0</strong></div>
+                                    <div><small>Data age:</small> <strong id="dashboardDataAge" style="color:var(--text-primary);">0 days</strong></div>
+                                    <hr>
+                                    <div><small>Active farmers:</small> <strong id="dashboardActiveFarmers" style="color:var(--text-primary);">0</strong></div>
+                                    <div><small>Archived farmers:</small> <strong id="dashboardArchivedFarmers" style="color:var(--text-primary);">0</strong></div>
+                                    <div class="mt-2"><small>API Status:</small> <span id="dashboardApiStatus" class="api-status online"><span class="dot"></span> Online</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========= FARMERS ========= -->
+                <div class="tab-pane fade" id="farmers">
+                    <div class="d-flex justify-content-between mb-3 flex-wrap gap-2">
+                        <div class="d-flex gap-2 align-items-center flex-wrap">
+                            <h5 class="mb-0" style="color: var(--text-primary);"><i class="bi bi-people me-2"></i>Farmers</h5>
+                            <div class="search-box">
+                                <input type="text" class="form-control form-control-sm" id="farmerSearchInput" placeholder="🔍 Search..." autocomplete="off" />
+                                <div class="search-actions"><button class="clear-btn" id="clearSearchBtn"><i class="bi bi-x-circle"></i></button></div>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button class="btn btn-outline-secondary btn-sm" id="toggleArchivedView"><i class="bi bi-archive me-1"></i> Show Archived</button>
+                            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#farmerModal"><i class="bi bi-plus-circle"></i> Register</button>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-body p-0">
+                            <div style="max-height:500px;overflow-y:auto;">
+                                <table class="table table-hover mb-0 farmers-table">
+                                    <thead style="position:sticky;top:0;z-index:10;">
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Full Name</th>
+                                            <th>Ghana Card</th>
+                                            <th>Type</th>
+                                            <th>Telephone</th>
+                                            <th>Station</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="farmersBody"></tbody>
+                                </table>
+                                <div id="noFarmersFound" class="no-results d-none"><i class="bi bi-search"></i><p>No farmers match.</p></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mt-2 text-muted small">Showing <span id="visibleFarmerCount">0</span> of <span id="totalFarmerCount">0</span> farmers</div>
+                </div>
+
+                <!-- ========= Purchase Clerk RECORDS ========= -->
+                <div class="tab-pane fade" id="pc">
+                    <div class="d-flex justify-content-between mb-3 flex-wrap gap-2">
+                        <h5 class="mb-0" style="color: var(--text-primary);"><i class="bi bi-shop me-2"></i>Purchase Clerk Records</h5>
+                        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#pcModal"><i class="bi bi-plus-circle"></i> Add Purchase Clerk Record</button>
+                    </div>
+                    <div class="card">
+                        <div class="card-body p-0" style="max-height:500px;overflow-y:auto;">
+                            <table class="table table-hover mb-0">
+                                <thead style="position:sticky;top:0;z-index:10;"><tr><th>Farmer</th><th>Date</th><th>kg</th><th>Bags</th><th>Rate</th><th>Payment</th><th>Station</th><th>Actions</th></tr></thead>
+                                <tbody id="pcBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========= CASH ========= -->
+                <div class="tab-pane fade" id="cash">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header"><i class="bi bi-arrow-down-circle text-success"></i> Cash In <span class="text-muted small"></span></div>
+                                <div class="card-body">
+                                    <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#cashInModal"><i class="bi bi-plus-circle"></i> Record Cash In</button>
+                                    <div class="mt-3" style="max-height:300px;overflow-y:auto;">
+                                        <table class="table table-sm table-hover">
+                                            <thead><tr><th>Date</th><th>Source</th><th>Purpose</th><th>Amount</th><th>Actions</th></tr></thead>
+                                            <tbody id="cashInBody"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header"><i class="bi bi-arrow-up-circle text-danger"></i> Cash Out <span class="text-muted small"></span></div>
+                                <div class="card-body">
+                                    <div class="mt-3" style="max-height:300px;overflow-y:auto;">
+                                        <table class="table table-sm table-hover">
+                                            <thead><tr><th>Date</th><th>PC</th><th>Farmer</th><th>Amount</th></tr></thead>
+                                            <tbody id="cashOutBody"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">Cash Balance Report</div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4"><strong>Total Cash In:</strong> <span id="totalCashIn" class="text-success">0.00 GHS</span></div>
+                                <div class="col-md-4"><strong>Total Cash Out:</strong> <span id="totalCashOut" class="text-danger">0.00 GHS</span></div>
+                                <div class="col-md-4"><strong>Balance:</strong> <span id="cashBalanceDisplay" class="text-primary fw-bold">0.00 GHS</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========= STOCK/DISPATCH ========= -->
+                <div class="tab-pane fade" id="stock">
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header"><i class="bi bi-box-seam"></i> Stock In <span class="text-muted small"></span></div>
+                                <div class="card-body">
+                                    <div class="mt-3" style="max-height:300px;overflow-y:auto;">
+                                        <table class="table table-sm table-hover">
+                                            <thead><tr><th>Date</th><th>PC</th><th>Bags</th><th>kg</th><th>Amount</th><th></th></tr></thead>
+                                            <tbody id="stockInBody"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header"><i class="bi bi-truck"></i> Dispatch to AgroEcom Depo</div>
+                                <div class="card-body">
+                                    <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#stockOutModal"><i class="bi bi-plus-circle"></i> Record Dispatch</button>
+                                    <button class="btn btn-info btn-sm ms-2" id="generateDispatchReport"><i class="bi bi-file-earmark-text"></i> Dispatch Report</button>
+                                    <div class="mt-3" style="max-height:300px;overflow-y:auto;">
+                                        <table class="table table-sm table-hover">
+                                            <thead><tr><th>Date</th><th>PC</th><th>Bags</th><th>kg</th><th>Type</th><th></th></tr></thead>
+                                            <tbody id="stockOutBody"></tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mt-3 animate-fade-up">
+                        <div class="card-header">
+                            <i class="bi bi-download me-2"></i>Export Reports
+                            <span class="text-muted small ms-2">(Stock In, Dispatch & Ledger)</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="export-dropdown-group">
+                                <button class="btn btn-outline-primary btn-sm" id="exportStockInBtn"><i class="bi bi-box-seam"></i> Stock In CSV</button>
+                                <button class="btn btn-outline-warning btn-sm" id="exportStockOutBtn"><i class="bi bi-truck"></i> Dispatch CSV</button>
+                                <button class="btn btn-outline-success btn-sm" id="exportLedgerBtn"><i class="bi bi-journal"></i> Ledger CSV</button>
+                                <button class="btn btn-outline-secondary btn-sm" id="exportAllStockBtn"><i class="bi bi-file-earmark-zip"></i> All Stock Reports</button>
+                            </div>
+                            <small class="text-muted d-block mt-2"><i class="bi bi-info-circle"></i> Export all stock-related data as CSV files for reporting</small>
+                        </div>
+                    </div>
+
+                    <div class="card mt-3">
+                        <div class="card-header">Stock & Dispatch Report</div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3"><strong>Total Stock In:</strong> <span id="stockTotalIn" class="text-success">0 kg</span></div>
+                                <div class="col-md-3"><strong>Total Dispatched:</strong> <span id="stockTotalOut" class="text-danger">0 kg</span></div>
+                                <div class="col-md-3"><strong>Stock Balance:</strong> <span id="stockBalanceDisplay" class="text-primary fw-bold">0 kg</span></div>
+                                <div class="col-md-3"><strong>Total Bags:</strong> <span id="stockTotalBags" class="text-info">0</span></div>
+                            </div>
+                            <div class="row mt-2">
+                                <div class="col-md-4"><strong>Total Dispatches:</strong> <span id="dispatchCountDisplay" class="text-warning">0</span></div>
+                                <div class="col-md-4"><strong>Total kg Dispatched:</strong> <span id="dispatchKgDisplay" class="text-warning">0 kg</span></div>
+                                <div class="col-md-4"><strong>Total Bags Dispatched:</strong> <span id="dispatchBagsDisplay" class="text-warning">0</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mt-3" id="dispatchReportCard" style="display:none;">
+                        <div class="card-header">Dispatch Report <button class="btn btn-sm btn-outline-secondary float-end" id="closeDispatchReport"><i class="bi bi-x"></i></button></div>
+                        <div class="card-body" id="dispatchReportBody"></div>
+                    </div>
+
+                    <div class="card mt-3">
+                        <div class="card-header">Payment to Cocoa P.C Ledger</div>
+                        <div class="card-body p-0" style="max-height:300px;overflow-y:auto;">
+                            <table class="table table-sm table-hover mb-0">
+                                <thead><tr><th>Date</th><th>PC Name</th><th>Amount</th><th>Purpose</th></tr></thead>
+                                <tbody id="pcLedgerBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========= Purchase Clerk LOANS ========= -->
+                <div class="tab-pane fade" id="loan">
+                    <div class="d-flex justify-content-between mb-3 flex-wrap gap-2">
+                        <h5 class="mb-0" style="color: var(--text-primary);"><i class="bi bi-credit-card me-2"></i>Purchase Clerk to Farmer Loans</h5>
+                        <button class="btn btn-loan btn-sm" data-bs-toggle="modal" data-bs-target="#loanModal"><i class="bi bi-plus-circle"></i> Record Loan</button>
+                    </div>
+                    <div class="card">
+                        <div class="card-body p-0" style="max-height:400px;overflow-y:auto;">
+                            <table class="table table-hover mb-0">
+                                <thead style="position:sticky;top:0;z-index:10;"><tr><th>Date</th><th>Farmer</th><th>Amount (GHS)</th><th>Purpose</th><th>Status</th><th>Actions</th></tr></thead>
+                                <tbody id="loanBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card mt-3">
+                        <div class="card-header">
+                            <i class="bi bi-download me-2"></i>Loan Reports
+                            <span class="text-muted small ms-2">(Export loan data)</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="export-dropdown-group">
+                                <button class="btn btn-outline-loan btn-sm" id="exportActiveLoansBtn"><i class="bi bi-credit-card"></i> Active Loans CSV</button>
+                                <button class="btn btn-outline-success btn-sm" id="exportPaidLoansBtn"><i class="bi bi-check-circle"></i> Paid Loans CSV</button>
+                                <button class="btn btn-outline-secondary btn-sm" id="exportAllLoansBtn"><i class="bi bi-file-earmark-zip"></i> All Loans CSV</button>
+                            </div>
+                            <small class="text-muted d-block mt-2"><i class="bi bi-info-circle"></i> Export loan records for farmers</small>
+                        </div>
+                    </div>
+                    <div class="card mt-3">
+                        <div class="card-header">Loan Summary</div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-4"><strong>Total Loans Given:</strong> <span id="totalLoans" class="text-primary">0.00 GHS</span></div>
+                                <div class="col-md-4"><strong>Total Repaid:</strong> <span id="totalRepaid" class="text-success">0.00 GHS</span></div>
+                                <div class="col-md-4"><strong>Outstanding:</strong> <span id="totalOutstanding" class="text-danger">0.00 GHS</span></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========= BONUS ========= -->
+                <div class="tab-pane fade" id="bonus">
+                    <div class="row g-3 align-items-end mb-3">
+                        <div class="col-md-3">
+                            <label class="form-label">Year</label>
+                            <input type="number" class="form-control" id="bonusYear" value="2026" />
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-primary w-100" id="calculateBonusBtn"><i class="bi bi-calculator me-2"></i>Calculate</button>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-outline-secondary w-100" id="exportBonusBtn"><i class="bi bi-download me-2"></i>Export CSV</button>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-warning w-100" id="payBonusBtn"><i class="bi bi-cash me-2"></i>Pay Bonuses</button>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">Bonus Summary · <span id="bonusYearDisplay">2026</span></div>
+                        <div class="card-body p-0" style="max-height:500px;overflow-y:auto;">
+                            <table class="table table-hover mb-0">
+                                <thead style="position:sticky;top:0;z-index:10;"><tr><th>ID</th><th>Name</th><th>Total kg</th><th>Bags</th><th>Payment</th><th>Bonus Rate</th><th>Bonus</th><th>Status</th></tr></thead>
+                                <tbody id="bonusBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card mt-3">
+                        <div class="card-header">Bonus Payment History</div>
+                        <div class="card-body p-0" style="max-height:300px;overflow-y:auto;">
+                            <table class="table table-sm table-hover mb-0">
+                                <thead><tr><th>Date</th><th>Farmer</th><th>Amount</th><th>Year</th><th>Status</th></tr></thead>
+                                <tbody id="bonusHistoryBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ========= SETTINGS ========= -->
+                <div class="tab-pane fade" id="settings">
+                    <h5 class="animate-fade-down" style="color: var(--text-primary);"><i class="bi bi-gear me-2"></i>Settings</h5>
+                    <div class="row g-3 mt-2">
+                        <div class="col-md-6">
+                            <div class="card animate-slide-left">
+                                <div class="card-header">Payment & Bonus Rules</div>
+                                <div class="card-body">
+                                    <div class="mb-2"><label class="form-label">Price per kg (GHS)</label><input type="number" step="0.01" class="form-control" id="pricePerKg" value="0.50" /></div>
+                                    <div class="mb-2"><label class="form-label">Bonus Rate (%)</label><input type="number" step="0.1" class="form-control" id="bonusRate" value="5" /></div>
+                                    <div class="mb-2"><label class="form-label">Volume Tier (kg)</label><input type="number" class="form-control" id="volumeTier" value="10000" /></div>
+                                    <div class="mb-2"><label class="form-label">Volume Bonus Extra (%)</label><input type="number" step="0.1" class="form-control" id="volumeBonusExtra" value="10" /></div>
+                                    <button class="btn btn-sm btn-outline-primary" id="saveSettingsBtn"><i class="bi bi-save me-1"></i>Save</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card animate-slide-right">
+                                <div class="card-header"><i class="bi bi-pin-map me-2"></i>System</div>
+                                <div class="card-body">
+                                    <div class="alert alert-success" style="background:var(--bg-alert-success);border-color:var(--border-alert-success);color:var(--color-alert-success);">
+                                        <i class="bi bi-check-circle-fill me-2"></i><strong>Cocoa P.C · Ghana</strong>
+                                    </div>
+                                    <div class="mt-3 p-3 rounded" style="background:var(--bg-input);border:1px solid var(--border-color);">
+                                        <h6><i class="bi bi-stats"></i> Stats</h6>
+                                        <div class="row">
+                                            <div class="col-6"><small>Active Farmers:</small> <strong id="settingsActiveFarmerCount" style="color:var(--text-primary);">0</strong></div>
+                                            <div class="col-6"><small>Archived Farmers:</small> <strong id="settingsArchivedFarmerCount" style="color:var(--text-primary);">0</strong></div>
+                                            <div class="col-6"><small>Total Records:</small> <strong id="settingsRecordCount" style="color:var(--text-primary);">0</strong></div>
+                                            <div class="col-6"><small>Total kg:</small> <strong id="settingsTotalKg" style="color:var(--text-primary);">0</strong></div>
+                                            <div class="col-6"><small>Dispatches:</small> <strong id="settingsDispatchCount" style="color:var(--text-primary);">0</strong></div>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3">
+                                        <h6><i class="bi bi-database me-1"></i>Records</h6>
+                                        <small class="text-muted">Total records stored: <span id="storageCount">0</span></small>
+                                    </div>
+                                    <div class="mt-3">
+                                        <h6><i class="bi bi-clock-history me-1"></i>Data Retention</h6>
+                                        <div id="retentionStatus" class="small"></div>
+                                        <div class="d-flex gap-2 mt-2 flex-wrap">
+                                            <button class="btn btn-danger btn-sm" id="resetSettingsOnlyBtn"><i class="bi bi-gear me-1"></i>Reset Settings Only</button>
+                                            <button class="btn btn-danger btn-sm" id="factoryResetBtn"><i class="bi bi-trash me-1"></i>⚠️ Factory Reset</button>
+                                        </div>
+                                    </div>
+                                    <div class="mt-3">
+                                        <h6><i class="bi bi-shield-check me-1"></i>Backup & Restore</h6>
+                                        <div class="d-flex gap-2 flex-wrap">
+                                            <button class="btn btn-outline-success btn-sm" id="exportBackupBtn"><i class="bi bi-download me-1"></i>Export Backup (JSON)</button>
+                                            <button class="btn btn-outline-warning btn-sm" id="importBackupBtn"><i class="bi bi-upload me-1"></i>Restore Backup</button>
+                                            <input type="file" id="importBackupInput" accept=".json" style="display:none" />
+                                        </div>
+                                        <small class="text-muted d-block mt-1"><i class="bi bi-info-circle"></i> Export all data (farmers, records, settings) as a JSON file.</small>
+                                    </div>
+                                    <div class="mt-3">
+                                        <h6><i class="bi bi-plug me-1"></i>API Configuration</h6>
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-text">API URL</span>
+                                            <input type="text" class="form-control" id="apiUrlInput" placeholder="http://localhost:5000/api" />
+                                            <button class="btn btn-outline-secondary" id="saveApiUrlBtn">Save</button>
+                                        </div>
+                                        <small class="text-muted d-block mt-1"><i class="bi bi-info-circle"></i> Change the API endpoint if the server is hosted elsewhere.</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="ghana-footer">
+                <span class="cocoa-leaf cocoa-leaf-sm me-1">🌿</span> AgroEcom Ghana · Cocoa P.C · 64kg/bag
+                <span class="mx-2">·</span><span id="footerRecordCount">0 records</span>
+                <span class="mx-2">·</span><span class="text-muted" id="footerDataAge">Data age: 0 days</span>
+                <span class="mx-2">·</span><span class="text-muted" id="footerDispatchCount">Dispatches: 0</span>
+                <span class="mx-2">·</span><span class="text-muted" id="footerApiStatus">API: Online</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========= MODALS ========= -->
+
+    <!-- Farmer Registration Modal -->
+    <div class="modal fade" id="farmerModal" tabindex="-1" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content animate-rotate">
+                <div class="modal-header" style="background: var(--ecom-primary); color: white;">
+                    <h5 class="modal-title"><i class="bi bi-person-plus me-2"></i>Farmer Registration</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="farmerEditId" />
+                    <ul class="nav nav-pills mb-3" id="farmerTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="main-tab" data-bs-toggle="pill" data-bs-target="#mainFormContainer" type="button" role="tab">Main Farmer</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="casual-tab" data-bs-toggle="pill" data-bs-target="#casualFormContainer" type="button" role="tab">Casual Farmer</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="farmerTabContent">
+                        <div class="tab-pane fade show active" id="mainFormContainer" role="tabpanel">
+                            <form id="mainForm" novalidate>
+                                <div class="mb-3">
+                                    <label class="form-label">Full Name <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="mainName" placeholder="e.g. Kwame Mensah" required />
+                                    <div class="invalid-feedback">Full name is required.</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Ghana Card <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="mainGhanaCard" placeholder="GHA-123456789-0" required />
+                                    <div class="invalid-feedback">Format must be GHA-XXXXXXXXX-X (9 digits + check digit).</div>
+                                    <small class="text-muted">Format: GHA-XXXXXXXXX-X (9 digits + check digit)</small>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Telephone <span class="text-danger">*</span></label>
+                                    <input type="tel" class="form-control" id="mainTelephone" placeholder="e.g. 0244XXXXXX" required />
+                                    <div class="invalid-feedback">Telephone is required.</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Date of Birth <span class="text-danger">*</span></label>
+                                    <input type="date" class="form-control" id="mainDob" required />
+                                    <div class="invalid-feedback">Date of Birth is required.</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Station <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="mainStation" value="Purchase Clerk" readonly style="background-color: var(--bg-input); cursor: default;" />
+                                    <small class="text-muted">Read-only</small>
+                                </div>
+                                <button type="button" class="btn btn-primary w-100 mt-3" id="saveMainFarmerBtn"><i class="bi bi-check2 me-1"></i>Register Main Farmer</button>
+                            </form>
+                        </div>
+                        <div class="tab-pane fade" id="casualFormContainer" role="tabpanel">
+                            <form id="casualForm" novalidate>
+                                <div class="mb-3">
+                                    <label class="form-label">Full Name <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="casualName" placeholder="e.g. Akua Mansa" required />
+                                    <div class="invalid-feedback">Full name is required.</div>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Ghana Card <span class="text-danger">*</span></label>
+                                    <input type="text" class="form-control" id="casualGhanaCard" readonly style="background-color: #f8f9fa; cursor: default;" />
+                                    <small class="text-muted">Auto-generated WALKIN-xxxxx. Read-only.</small>
+                                </div>
+                                <button type="button" class="btn btn-warning w-100 mt-3" id="saveCasualFarmerBtn"><i class="bi bi-check2 me-1"></i>Register Casual Farmer</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Purchase Clerk Record Modal -->
+    <div class="modal fade" id="pcModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content animate-rotate">
+                <div class="modal-header"><h5 class="modal-title"><i class="bi bi-shop me-2"></i>Add Cocoa P.C Record</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body">
+                    <input type="hidden" id="pcEditId" />
+                    <div class="mb-2">
+                        <label class="form-label">Farmer <span class="text-danger">*</span></label>
+                        <div class="searchable-dropdown">
+                            <input type="text" class="form-control" id="pcFarmerSearch" placeholder="Search farmer..." autocomplete="off" />
+                            <input type="hidden" id="pcFarmerId" />
+                            <div class="dropdown-list" id="pcFarmerDropdown"></div>
+                            <small class="text-muted d-block mt-1">Type to search, click to select</small>
+                        </div>
+                    </div>
+                    <div class="mb-2"><label class="form-label">Date <span class="text-danger">*</span></label><input type="date" class="form-control" id="pcDate" /></div>
+                    <div class="row">
+                        <div class="col-6"><label class="form-label">Cocoa kg <span class="text-danger">*</span></label><input type="number" step="0.1" class="form-control" id="pcKg" placeholder="Weight in kg" /></div>
+                        <div class="col-6"><label class="form-label">Bags (64kg) <span class="text-danger">*</span></label><input type="number" step="0.01" class="form-control" id="pcBags" placeholder="Enter bags manually" /></div>
+                    </div>
+                    <div class="row mt-2">
+                        <div class="col-6"><label class="form-label">Rate (GHS/kg)</label><input type="number" step="0.01" class="form-control" id="pcRate" /></div>
+                        <div class="col-6"><label class="form-label">Payment (GHS)</label><input type="number" step="0.01" class="form-control" id="pcPayment" readonly style="font-weight:bold;color:var(--ecom-primary);" /></div>
+                    </div>
+                    <div class="mt-2"><label class="form-label">Station</label>
+                        <input class="form-control" id="pcStation" readonly value="Cocoa P.C Ghana" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn btn-primary" id="savePcBtn"><i class="bi bi-check2 me-1"></i>Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cash In Modal -->
+    <div class="modal fade" id="cashInModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content animate-rotate">
+                <div class="modal-header"><h5 class="modal-title"><i class="bi bi-arrow-down-circle text-success me-2"></i>Cash In</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body">
+                    <input type="hidden" id="cashInEditId" />
+                    <div class="mb-2"><label class="form-label">Date <span class="text-danger">*</span></label><input type="date" class="form-control" id="cashInDate" /></div>
+                    <div class="mb-2"><label class="form-label">Source <span class="text-danger">*</span></label>
+                        <select class="form-select" id="cashInSource"><option value="Stock/D.O">Stock/D.O</option><option value="Ecom Depo">Ecom Depo</option><option value="Other">Other</option></select>
+                    </div>
+                    <div class="mb-2"><label class="form-label">Purpose <span class="text-danger">*</span></label>
+                        <select class="form-select" id="cashInPurpose"><option value="Cocoa Purchase">Cocoa Purchase</option><option value="Operations">Operations</option><option value="Bonus Payment">Bonus Payment</option><option value="Other">Other</option></select>
+                    </div>
+                    <div class="mb-2"><label class="form-label">Amount (GHS) <span class="text-danger">*</span></label><input type="number" step="0.01" class="form-control" id="cashInAmount" placeholder="0.00" /></div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn btn-success" id="saveCashInBtn"><i class="bi bi-check2 me-1"></i>Record</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stock Out / Dispatch Modal -->
+    <div class="modal fade" id="stockOutModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content animate-rotate">
+                <div class="modal-header"><h5 class="modal-title"><i class="bi bi-truck me-2"></i>Dispatch to AgroEcom Depo</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body">
+                    <input type="hidden" id="stockOutEditId" />
+                    <div class="mb-2"><label class="form-label">Date <span class="text-danger">*</span></label><input type="date" class="form-control" id="stockOutDate" /></div>
+                    <div class="mb-2"><label class="form-label">Cocoa Purchase Clerk Name <span class="text-danger">*</span></label>
+                        <select class="form-select" id="stockOutPc"></select>
+                    </div>
+                    <div class="row">
+                        <div class="col-6"><label class="form-label">Bags (64kg) <span class="text-danger">*</span></label><input type="number" step="0.01" class="form-control" id="stockOutBags" placeholder="Number of bags" /></div>
+                        <div class="col-6"><label class="form-label">Total kg</label><input type="number" step="0.1" class="form-control" id="stockOutKg" readonly style="font-weight:bold;color:var(--ecom-primary);" /></div>
+                    </div>
+                    <div class="mt-2">
+                        <label class="form-label">Dispatch Note (Optional)</label>
+                        <input class="form-control" id="stockOutNote" placeholder="e.g. Batch #001, Truck 123" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn btn-warning" id="saveStockOutBtn"><i class="bi bi-check2 me-1"></i>Dispatch</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loan Modal -->
+    <div class="modal fade" id="loanModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content animate-rotate">
+                <div class="modal-header"><h5 class="modal-title"><i class="bi bi-credit-card me-2"></i>Record P.C Loan</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body">
+                    <input type="hidden" id="loanEditId" />
+                    <div class="mb-2"><label class="form-label">Farmer <span class="text-danger">*</span></label>
+                        <select class="form-select" id="loanFarmerId"></select>
+                        <small class="text-muted d-block mt-1"><i class="bi bi-info-circle"></i> Only Registered Farmers can receive loans.</small>
+                    </div>
+                    <div class="mb-2"><label class="form-label">Date <span class="text-danger">*</span></label><input type="date" class="form-control" id="loanDate" /></div>
+                    <div class="mb-2"><label class="form-label">Loan Amount (GHS) <span class="text-danger">*</span></label><input type="number" step="0.01" class="form-control" id="loanAmount" placeholder="0.00" /></div>
+                    <div class="mb-2"><label class="form-label">Purpose</label>
+                        <select class="form-select" id="loanPurpose"><option value="Cocoa Inputs">Cocoa Inputs</option><option value="Farming Equipment">Farming Equipment</option><option value="Personal">Personal</option><option value="Other">Other</option></select>
+                    </div>
+                    <div class="mb-2"><label class="form-label">Status</label>
+                        <select class="form-select" id="loanStatus"><option value="Active">Active</option><option value="Paid">Paid</option></select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn btn-loan" id="saveLoanBtn"><i class="bi bi-check2 me-1"></i>Record Loan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Farmer Detail Modal -->
+    <div class="modal fade" id="farmerDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-person-circle me-2"></i>Farmer Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="farmerDetailBody"></div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+        <div id="liveToast" class="toast" role="alert">
+            <div class="d-flex"><div class="toast-body" id="toastMsg">Saved.</div><button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast"></button></div>
+        </div>
+    </div>
+
+    <!-- Logout Password Modal -->
+    <div class="modal fade password-modal" id="logoutPasswordModal" tabindex="-1" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content animate-rotate">
+                <div class="modal-header"><h5 class="modal-title"><i class="bi bi-shield-lock me-2"></i>Verify Logout</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body">
+                    <p class="text-muted">Enter your password to confirm logout.</p>
+                    <div class="password-input-group">
+                        <input type="password" class="form-control" id="logoutPasswordInput" placeholder="Enter your password" />
+                        <button class="toggle-password" id="toggleLogoutPassword" type="button"><i class="bi bi-eye"></i></button>
+                    </div>
+                    <div id="logoutPasswordError" class="text-danger small mt-2 d-none">❌ Incorrect password</div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button class="btn btn-danger" id="confirmLogoutBtn"><i class="bi bi-box-arrow-right me-1"></i>Confirm Logout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="app.js" defer></script>
+    <footer style="
+    background: white;
+    color: rgb(96, 92, 92);
+    text-align: center;
+    padding: 12px;
+    font-size: 13px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    border-top: 2px solid;
+    font-family: Arial, sans-serif;
+    ">
+    @ <span id="footerYear"></span> Cocoa Purchase Clerk System Management. All Rights Reserved.
+</footer>
+</body>
+</html>

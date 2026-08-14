@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="AgroEcom" />
+    <title>AgroEcom Mobile</title>
+    
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="style.css" />
+    
+    <style>
+        :root {
+            --mobile-padding: 1rem;
+            --button-height: 3rem;
+            --touch-target: 44px;
+        }
+
+        * {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        input, textarea, select {
+            -webkit-user-select: text;
+            user-select: text;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
+            font-size: 16px;
+            padding-top: 60px;
+            padding-bottom: 80px;
+            background: var(--bg-primary);
+        }
+
+        .mobile-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--ecom-primary);
+            color: white;
+            padding: 1rem;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .mobile-header h5 {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .mobile-header-user {
+            font-size: 0.8rem;
+            opacity: 0.9;
+        }
+
+        .mobile-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 2px solid var(--border-color);
+            display: flex;
+            gap: 0;
+            z-index: 900;
+            height: 70px;
+        }
+
+        .mobile-nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 0.5rem;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+            min-height: var(--touch-target);
+        }
+
+        .mobile-nav-item.active {
+            color: var(--ecom-primary);
+            background: rgba(76, 175, 80, 0.05);
+            border-top: 3px solid var(--ecom-primary);
+        }
+
+        .mobile-nav-item i {
+            font-size: 1.5rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .mobile-content {
+            padding: var(--mobile-padding);
+            max-width: 100%;
+        }
+
+        .mobile-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .mobile-stat {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            margin-bottom: 0.75rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .mobile-stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--ecom-primary);
+            margin: 0.5rem 0;
+        }
+
+        .mobile-stat-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .mobile-stat-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .mobile-btn {
+            width: 100%;
+            height: var(--button-height);
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: 10px;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 0.75rem;
+        }
+
+        .mobile-btn i {
+            font-size: 1.2rem;
+        }
+
+        .mobile-btn-primary {
+            background: var(--ecom-primary);
+            color: white;
+        }
+
+        .mobile-btn-primary:active {
+            opacity: 0.8;
+            transform: scale(0.98);
+        }
+
+        .mobile-btn-secondary {
+            background: #e0e0e0;
+            color: var(--text-primary);
+        }
+
+        .mobile-btn-secondary:active {
+            opacity: 0.8;
+        }
+
+        .mobile-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .mobile-input-group label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .mobile-input-group input,
+        .mobile-input-group select {
+            height: 2.75rem;
+            padding: 0.75rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            background: var(--bg-input);
+            color: var(--text-primary);
+        }
+
+        .mobile-input-group input:focus,
+        .mobile-input-group select:focus {
+            border-color: var(--ecom-primary);
+            outline: none;
+            background: var(--bg-input);
+            color: var(--text-primary);
+        }
+        
+        .mobile-input-group input[type="password"],
+        .mobile-input-group input[type="text"] {
+            font-size: 1.1rem;
+            letter-spacing: 0.5px;
+            line-height: 1.5;
+        }
+
+        .mobile-table {
+            font-size: 0.85rem;
+            margin-top: 1rem;
+        }
+
+        .mobile-table tr {
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .mobile-table td {
+            padding: 0.75rem 0.5rem;
+            word-break: break-word;
+        }
+
+        .mobile-list-item {
+            background: white;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+
+        .mobile-list-item-info {
+            flex: 1;
+        }
+
+        .mobile-list-item-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .mobile-list-item-detail {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .mobile-list-item-value {
+            font-weight: bold;
+            color: var(--ecom-primary);
+            text-align: right;
+        }
+
+        .mobile-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            display: none;
+            align-items: flex-end;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        .mobile-modal.active {
+            display: flex;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(100%);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        .mobile-modal-content {
+            background: white;
+            width: 100%;
+            border-radius: 20px 20px 0 0;
+            padding: 1.5rem 1rem 2rem;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        .mobile-modal-header {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .mobile-modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+
+        .mobile-screen {
+            display: none;
+        }
+
+        .mobile-screen.active {
+            display: block;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin: 1.5rem 0 1rem 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title i {
+            color: var(--ecom-primary);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .toast-mobile {
+            position: fixed;
+            bottom: 90px;
+            left: 1rem;
+            right: 1rem;
+            background: var(--ecom-primary);
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            z-index: 1500;
+            animation: slideUp 0.3s ease-out;
+            display: none;
+        }
+
+        .toast-mobile.show {
+            display: block;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                font-size: 15px;
+            }
+
+            .mobile-stat-value {
+                font-size: 1.8rem;
+            }
+
+            .mobile-btn {
+                height: 50px;
+                font-size: 0.95rem;
+            }
+        }
+
+        .quick-action-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .quick-action-btn {
+            background: white;
+            border: 2px solid var(--border-color);
+            padding: 1rem;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            min-height: var(--touch-target);
+        }
+
+        .quick-action-btn:active {
+            background: rgba(76, 175, 80, 0.1);
+            border-color: var(--ecom-primary);
+        }
+
+        .quick-action-btn i {
+            font-size: 1.8rem;
+            color: var(--ecom-primary);
+        }
+
+        .quick-action-btn span {
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-align: center;
+            color: var(--text-primary);
+        }
+
+        .offline-badge {
+            display: inline-block;
+            background: rgba(255, 193, 7, 0.9);
+            color: #856404;
+            padding: 0.3rem 0.6rem;
+            border-radius: 6px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .offline-badge i {
+            margin-right: 0.3rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Login Screen -->
+    <div id="loginScreen" class="mobile-screen active">
+        <div style="padding: 2rem 1rem; text-align: center; margin-top: 3rem;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">🌿</div>
+            <h2 style="color: var(--text-primary); margin-bottom: 0.5rem;">AgroEcom Ghana</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 2rem;">Cocoa Management System</p>
+            
+            <form id="mobileLoginForm">
+                <div class="mobile-input-group">
+                    <label>Username</label>
+                    <input type="text" id="mobileUsername" placeholder="Enter username" value="Manager1" />
+                </div>
+                <div class="mobile-input-group">
+                    <label>Password</label>
+                    <input type="password" id="mobilePassword" placeholder="Enter password" />
+                </div>
+                <button type="submit" class="mobile-btn mobile-btn-primary">
+                    <i class="bi bi-unlock"></i> Login
+                </button>
+                <p id="loginError" style="color: #dc3545; font-size: 0.9rem; margin-top: 1rem; display: none;"></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="mainApp" style="display: none;">
+        <!-- Header -->
+        <div class="mobile-header">
+            <div>
+                <h5>🌿 AgroEcom</h5>
+                <div class="mobile-header-user" id="userDisplay">Welcome</div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <span id="offlineIndicator" class="offline-badge d-none">
+                    <i class="bi bi-wifi-off"></i> Offline
+                </span>
+                <button class="mobile-btn-logout" style="background: rgba(255,255,255,0.2); border: none; color: white; padding: 0.5rem; border-radius: 6px; cursor: pointer;">
+                    <i class="bi bi-box-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Dashboard Screen -->
+        <div id="dashboardScreen" class="mobile-screen active">
+            <div class="mobile-content">
+                <div class="section-title"><i class="bi bi-speedometer2"></i> Dashboard</div>
+                
+                <div class="quick-action-grid">
+                    <button class="quick-action-btn" data-action="addFarmer">
+                        <i class="bi bi-person-plus"></i>
+                        <span>Add Farmer</span>
+                    </button>
+                    <button class="quick-action-btn" data-action="addRecord">
+                        <i class="bi bi-shop"></i>
+                        <span>Purchase Record</span>
+                    </button>
+                    <button class="quick-action-btn" data-action="recordCash">
+                        <i class="bi bi-cash-stack"></i>
+                        <span>Cash In/Out</span>
+                    </button>
+                    <button class="quick-action-btn" data-action="dispatch">
+                        <i class="bi bi-truck"></i>
+                        <span>Dispatch</span>
+                    </button>
+                </div>
+
+                <div class="section-title"><i class="bi bi-graph-up"></i> Stats</div>
+                <div class="mobile-stat">
+                    <div class="mobile-stat-icon">👨‍🌾</div>
+                    <div class="mobile-stat-value" id="statFarmersM">0</div>
+                    <div class="mobile-stat-label">Active Farmers</div>
+                </div>
+
+                <div class="mobile-stat">
+                    <div class="mobile-stat-icon">📋</div>
+                    <div class="mobile-stat-value" id="statRecordsM">0</div>
+                    <div class="mobile-stat-label">Purchase Records</div>
+                </div>
+
+                <div class="mobile-stat">
+                    <div class="mobile-stat-icon">💰</div>
+                    <div class="mobile-stat-value" id="statCashM">0</div>
+                    <div class="mobile-stat-label">Cash Balance (GHS)</div>
+                </div>
+
+                <div class="mobile-stat">
+                    <div class="mobile-stat-icon">📦</div>
+                    <div class="mobile-stat-value" id="statStockM">0</div>
+                    <div class="mobile-stat-label">Stock (kg)</div>
+                </div>
+
+                <button class="mobile-btn mobile-btn-secondary" data-screen="farmers">
+                    <i class="bi bi-people"></i> View All Farmers
+                </button>
+            </div>
+        </div>
+
+        <!-- Farmers Screen -->
+        <div id="farmersScreen" class="mobile-screen">
+            <div class="mobile-content">
+                <div class="section-title"><i class="bi bi-people"></i> Farmers</div>
+                <div id="farmersList"></div>
+            </div>
+        </div>
+
+        <!-- Records Screen -->
+        <div id="recordsScreen" class="mobile-screen">
+            <div class="mobile-content">
+                <div class="section-title"><i class="bi bi-shop"></i> Recent Records</div>
+                <div id="recordsList"></div>
+            </div>
+        </div>
+
+        <!-- Settings Screen -->
+        <div id="settingsScreen" class="mobile-screen">
+            <div class="mobile-content">
+                <div class="section-title"><i class="bi bi-gear"></i> Settings</div>
+                <div class="mobile-card">
+                    <div style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6;">
+                        <p><strong>Version:</strong> 1.0 Mobile</p>
+                        <p><strong>Logged in as:</strong> <span id="settingsUsername">User</span></p>
+                        <p><strong>API Status:</strong> <span id="apiStatusM" class="status-badge status-success">Online</span></p>
+                        <p><strong>Data:</strong> <span id="dataCountM">0</span> records</p>
+                    </div>
+                </div>
+                <button class="mobile-btn mobile-btn-secondary" id="logoutBtnM">
+                    <i class="bi bi-box-arrow-right"></i> Logout
+                </button>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <div class="mobile-nav">
+            <button class="mobile-nav-item active" data-screen="dashboard">
+                <i class="bi bi-speedometer2"></i>
+                <span>Home</span>
+            </button>
+            <button class="mobile-nav-item" data-screen="farmers">
+                <i class="bi bi-people"></i>
+                <span>Farmers</span>
+            </button>
+            <button class="mobile-nav-item" data-screen="records">
+                <i class="bi bi-shop"></i>
+                <span>Records</span>
+            </button>
+            <button class="mobile-nav-item" data-screen="settings">
+                <i class="bi bi-gear"></i>
+                <span>Settings</span>
+            </button>
+        </div>
+
+        <!-- Toast -->
+        <div id="mobileToast" class="toast-mobile"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="offline-storage.js"></script>
+    <script>
+        // Register Service Worker for offline support
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('service-worker.js')
+                .then((reg) => {
+                    console.log('Service Worker registered:', reg);
+                    // Request persistent storage
+                    if (navigator.storage && navigator.storage.persist) {
+                        navigator.storage.persist().then((persistent) => {
+                            console.log('Persistent storage granted:', persistent);
+                        });
+                    }
+                })
+                .catch((err) => console.warn('Service Worker registration failed:', err));
+        }
+
+        // Mobile App Logic
+        const mobileApp = {
+            currentUser: null,
+            apiUrl: 'http://localhost:5000/api',
+            token: null,
+            farmers: [],
+            records: [],
+            isOnline: navigator.onLine,
+            syncQueue: [],
+
+            async init() {
+                // Initialize offline storage
+                await OfflineStorage.init();
+
+                // Check if already logged in
+                const savedToken = localStorage.getItem('authToken');
+                if (savedToken) {
+                    this.token = savedToken;
+                    this.showApp();
+                    await this.loadData();
+                }
+
+                this.setupEventListeners();
+                this.setupOfflineSupport();
+            },
+
+            setupOfflineSupport() {
+                // Listen for online/offline events
+                window.addEventListener('online', () => this.handleOnline());
+                window.addEventListener('offline', () => this.handleOffline());
+
+                // Listen for Service Worker messages
+                if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+                    navigator.serviceWorker.onmessage = (event) => {
+                        if (event.data.type === 'SYNC_COMPLETE') {
+                            console.log('Sync complete, reloading data...');
+                            this.loadData();
+                        }
+                    };
+                }
+
+                // Update online status on init
+                this.updateOfflineUI();
+            },
+
+            handleOnline() {
+                console.log('✅ Back online');
+                this.isOnline = true;
+                this.updateOfflineUI();
+                this.showToast('✅ You are back online');
+                // Trigger sync
+                this.syncPendingRequests();
+            },
+
+            handleOffline() {
+                console.log('❌ You are offline');
+                this.isOnline = false;
+                this.updateOfflineUI();
+                this.showToast('❌ You are offline - changes will sync when online');
+            },
+
+            updateOfflineUI() {
+                const indicator = document.getElementById('offlineIndicator');
+                if (indicator) {
+                    if (this.isOnline) {
+                        indicator.classList.add('d-none');
+                    } else {
+                        indicator.classList.remove('d-none');
+                    }
+                }
+            },
+
+            async syncPendingRequests() {
+                if (!this.isOnline) return;
+
+                const queuedRequests = await OfflineStorage.getQueuedRequests();
+                if (queuedRequests.length === 0) return;
+
+                console.log('Syncing', queuedRequests.length, 'pending requests...');
+                
+                for (const request of queuedRequests) {
+                    try {
+                        const response = await fetch(request.url, {
+                            method: request.method,
+                            headers: request.headers,
+                            body: request.body
+                        });
+
+                        if (response.ok) {
+                            await OfflineStorage.removeQueuedRequest(request.id);
+                            console.log('Synced:', request.url);
+                        }
+                    } catch (err) {
+                        console.error('Sync failed:', err);
+                    }
+                }
+
+                this.showToast(`✅ Synced ${queuedRequests.length} pending changes`);
+            },
+
+            setupEventListeners() {
+                // Login
+                document.getElementById('mobileLoginForm').addEventListener('submit', (e) => this.handleLogin(e));
+
+                // Navigation
+                document.querySelectorAll('[data-screen]').forEach(btn => {
+                    btn.addEventListener('click', () => this.switchScreen(btn.dataset.screen));
+                });
+
+                // Quick actions
+                document.querySelectorAll('[data-action]').forEach(btn => {
+                    btn.addEventListener('click', () => this.handleAction(btn.dataset.action));
+                });
+
+                // Logout
+                document.querySelector('.mobile-btn-logout').addEventListener('click', () => this.logout());
+                document.getElementById('logoutBtnM').addEventListener('click', () => this.logout());
+            },
+
+            async handleLogin(e) {
+                e.preventDefault();
+                const username = document.getElementById('mobileUsername').value;
+                const password = document.getElementById('mobilePassword').value;
+
+                try {
+                    const res = await fetch(`${this.apiUrl}/auth/login`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username, password })
+                    });
+
+                    if (!res.ok) throw new Error('Invalid credentials');
+                    
+                    const data = await res.json();
+                    this.token = data.token;
+                    this.currentUser = data.user;
+                    
+                    localStorage.setItem('authToken', this.token);
+                    this.showApp();
+                    await this.loadData();
+                } catch (err) {
+                    document.getElementById('loginError').textContent = err.message;
+                    document.getElementById('loginError').style.display = 'block';
+                }
+            },
+
+            showApp() {
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('mainApp').style.display = 'block';
+                document.getElementById('userDisplay').textContent = `${this.currentUser?.username || 'User'}`;
+                document.getElementById('settingsUsername').textContent = this.currentUser?.username || 'User';
+            },
+
+            switchScreen(screen) {
+                // Hide all screens
+                document.querySelectorAll('.mobile-screen').forEach(s => s.classList.remove('active'));
+                
+                // Show selected screen
+                document.getElementById(screen + 'Screen').classList.add('active');
+
+                // Update nav
+                document.querySelectorAll('.mobile-nav-item').forEach(item => item.classList.remove('active'));
+                document.querySelector(`[data-screen="${screen}"]`).classList.add('active');
+
+                // Load data if needed
+                if (screen === 'farmers') this.renderFarmers();
+                if (screen === 'records') this.renderRecords();
+            },
+
+            handleAction(action) {
+                this.showToast(`${action} feature coming soon!`);
+            },
+
+            async loadData() {
+                try {
+                    if (this.isOnline) {
+                        const res = await fetch(`${this.apiUrl}/farmers`, {
+                            headers: { 'Authorization': `Bearer ${this.token}` }
+                        });
+                        if (res.ok) {
+                            this.farmers = await res.json();
+                            // Cache for offline use
+                            await OfflineStorage.saveFarmers(this.farmers);
+                        }
+                    } else {
+                        // Load from offline storage
+                        this.farmers = await OfflineStorage.getFarmers();
+                        console.log('Loaded', this.farmers.length, 'farmers from offline storage');
+                    }
+                    this.updateStats();
+                } catch (err) {
+                    console.error('Error loading data:', err);
+                    // Try to load from offline storage as fallback
+                    this.farmers = await OfflineStorage.getFarmers();
+                    this.updateStats();
+                }
+            },
+
+            updateStats() {
+                document.getElementById('statFarmersM').textContent = this.farmers.length;
+                document.getElementById('settingsUsername').textContent = this.currentUser?.username || 'User';
+                document.getElementById('dataCountM').textContent = this.farmers.length;
+            },
+
+            renderFarmers() {
+                const html = this.farmers.map(f => `
+                    <div class="mobile-list-item">
+                        <div class="mobile-list-item-info">
+                            <div class="mobile-list-item-title">${f.name}</div>
+                            <div class="mobile-list-item-detail">${f.ghanaCard || 'N/A'}</div>
+                        </div>
+                        <div class="mobile-list-item-value">${f.telephone || '-'}</div>
+                    </div>
+                `).join('');
+                document.getElementById('farmersList').innerHTML = html || '<p style="text-align:center;color:var(--text-secondary);">No farmers yet</p>';
+            },
+
+            renderRecords() {
+                document.getElementById('recordsList').innerHTML = '<p style="text-align:center;color:var(--text-secondary);">No records yet</p>';
+            },
+
+            showToast(message) {
+                const toast = document.getElementById('mobileToast');
+                toast.textContent = message;
+                toast.classList.add('show');
+                setTimeout(() => toast.classList.remove('show'), 2000);
+            },
+
+            logout() {
+                if (confirm('Are you sure you want to logout?')) {
+                    localStorage.removeItem('authToken');
+                    this.token = null;
+                    this.currentUser = null;
+                    document.getElementById('mainApp').style.display = 'none';
+                    document.getElementById('loginScreen').style.display = 'block';
+                    document.getElementById('mobileLoginForm').reset();
+                }
+            }
+        };
+
+        // Initialize on load
+        window.addEventListener('DOMContentLoaded', () => mobileApp.init());
+    </script>
+</body>
+</html>

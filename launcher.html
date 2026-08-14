@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AgroEcom - Choose Version</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <style>
+        body {
+            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .launcher-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 3rem 2rem;
+            max-width: 500px;
+            text-align: center;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .launcher-logo {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .launcher-card h1 {
+            color: #2E7D32;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .launcher-card p {
+            color: #666;
+            margin-bottom: 2rem;
+        }
+
+        .version-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .version-btn {
+            padding: 1.5rem;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: inherit;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .version-btn i {
+            font-size: 2.5rem;
+            color: #4CAF50;
+        }
+
+        .version-btn:hover {
+            border-color: #4CAF50;
+            background: #f0f7f0;
+            transform: translateY(-4px);
+        }
+
+        .version-btn span {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .auto-detect {
+            font-size: 0.85rem;
+            color: #999;
+            margin-top: 1rem;
+        }
+
+        @media (max-width: 600px) {
+            .version-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .launcher-card {
+                padding: 2rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="launcher-card">
+        <div class="launcher-logo">🌿</div>
+        <h1>AgroEcom Ghana</h1>
+        <p>Cocoa Purchase Clerk Management System</p>
+
+        <div class="version-grid">
+            <a href="index.html" class="version-btn">
+                <i class="bi bi-display"></i>
+                <span>Desktop</span>
+            </a>
+            <a href="mobile.html" class="version-btn">
+                <i class="bi bi-phone"></i>
+                <span>Mobile</span>
+            </a>
+        </div>
+
+        <div class="auto-detect">
+            <p id="autoMessage">Auto-detecting device...</p>
+            <button class="btn btn-sm btn-outline-secondary" id="skipAutoBtn">Skip Auto-Detect</button>
+        </div>
+    </div>
+
+    <script>
+        // Auto-detect device type
+        function isMobile() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        }
+
+        const autoMessage = document.getElementById('autoMessage');
+        const skipBtn = document.getElementById('skipAutoBtn');
+
+        if (isMobile()) {
+            autoMessage.innerHTML = '📱 Mobile device detected! Redirecting to <strong>Mobile App</strong> in 2 seconds...';
+            setTimeout(() => {
+                window.location.href = 'mobile.html';
+            }, 2000);
+        } else {
+            autoMessage.innerHTML = '💻 Desktop detected. Choose your preferred version above.';
+        }
+
+        skipBtn.addEventListener('click', () => {
+            localStorage.setItem('skipAutoDetect', 'true');
+            autoMessage.textContent = 'Auto-detect disabled. Choose your version above.';
+        });
+    </script>
+</body>
+</html>
